@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nmap_citrix_enum_apps.nasl 10595 2018-07-24 13:51:36Z cfischer $
+# $Id: gb_nmap_citrix_enum_apps.nasl 12115 2018-10-26 09:30:41Z cfischer $
 #
 # Wrapper for Nmap Citrix Enum Apps NSE script.
 #
@@ -29,8 +29,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801819");
-  script_version("$Revision: 10595 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-24 15:51:36 +0200 (Tue, 24 Jul 2018) $");
+  script_version("$Revision: 12115 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 11:30:41 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2011-01-21 13:17:02 +0100 (Fri, 21 Jan 2011)");
   script_tag(name:"cvss_base", value:"5.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:N/A:N");
@@ -46,7 +46,9 @@ if(description)
   script_tag(name:"summary", value:"This script attempts to extract a list of published applications
   from the ICA Browser service.
 
-  This is a wrapper on the Nmap Security Scanner's (http://nmap.org) citrix-enum-apps.nse.");
+  This is a wrapper on the Nmap Security Scanner's citrix-enum-apps.nse.");
+
+  script_tag(name:"solution_type", value:"Mitigation");
 
   exit(0);
 }
@@ -60,7 +62,23 @@ if((! get_kb_item("Tools/Present/nmap5.21") &&
 port = 1604;
 if(!get_udp_port_state(port)) exit(0);
 
-res = pread(cmd: "nmap", argv: make_list("nmap", "-sU", "--script=citrix-enum-apps.nse", "-p", port, get_host_ip()));
+argv = make_list("nmap", "-sU", "--script=citrix-enum-apps.nse", "-p", port, get_host_ip());
+
+if(TARGET_IS_IPV6())
+  argv = make_list(argv, "-6");
+
+timing_policy = get_kb_item("Tools/nmap/timing_policy");
+if(timing_policy =~ '^-T[0-5]$')
+  argv = make_list(argv, timing_policy);
+
+source_iface = get_preference("source_iface");
+if(source_iface =~ '^[0-9a-zA-Z:_]+$') {
+  argv = make_list(argv, "-e");
+  argv = make_list(argv, source_iface);
+}
+
+res = pread(cmd:"nmap", argv:argv);
+
 if(res)
 {
   foreach line (split(res))

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: sw_http_os_detection.nasl 11724 2018-10-02 10:01:35Z cfischer $
+# $Id: sw_http_os_detection.nasl 12065 2018-10-25 06:59:36Z cfischer $
 #
 # HTTP OS Identification
 #
@@ -28,8 +28,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.111067");
-  script_version("$Revision: 11724 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-02 12:01:35 +0200 (Tue, 02 Oct 2018) $");
+  script_version("$Revision: 12065 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-25 08:59:36 +0200 (Thu, 25 Oct 2018) $");
   script_tag(name:"creation_date", value:"2015-12-10 16:00:00 +0100 (Thu, 10 Dec 2015)");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
   script_tag(name:"cvss_base", value:"0.0");
@@ -38,7 +38,7 @@ if(description)
   script_family("Product detection");
   script_copyright("This script is Copyright (C) 2015 SCHUTZWERK GmbH");
   script_dependencies("find_service.nasl", "http_version.nasl",
-                      "sw_apcu_info.nasl", "phpinfo.nasl"); # nb: Both are setting a possible existing banner used by check_php_banner()
+                      "sw_apcu_info.nasl", "gb_phpinfo_output_detect.nasl"); # nb: Both are setting a possible existing banner used by check_php_banner()
   script_require_ports("Services/www", 80);
   script_exclude_keys("Settings/disable_cgi_scanning");
 
@@ -73,6 +73,11 @@ function check_http_banner( port, banner ) {
 
     # Runs on Windows, Linux and Mac OS X
     if( "Kerio Connect" >< banner || "Kerio MailServer" >< banner ) return;
+
+    # Server: SentinelProtectionServer/7.3
+    # Server: SentinelKeysServer/1.3.2
+    # Seems to be running on Windows and NetWare systems.
+    if( "SentinelProtectionServer" >< banner || "SentinelKeysServer" >< banner ) return;
 
     # Server: EWS-NIC5/15.18
     # Server: EWS-NIC5/96.55
@@ -221,6 +226,8 @@ function check_http_banner( port, banner ) {
         register_and_report_os( os:"Ubuntu", version:"17.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
       } else if( "Ubuntu/bionic" >< banner ) {
         register_and_report_os( os:"Ubuntu", version:"18.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+      } else if( "Ubuntu/cosmic" >< banner ) {
+        register_and_report_os( os:"Ubuntu", version:"18.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
       } else {
         register_and_report_os( os:"Ubuntu", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
       }
@@ -645,8 +652,12 @@ function check_http_banner( port, banner ) {
 
       # TODO: Check and add banners of all Ubuntu versions. Take care of versions which
       # exists between multiple Ubuntu releases and register only the highest Ubuntu version.
-      if( "(Ubuntu)" >< banner ) {
-        if( "Apache/2.4.29 (Ubuntu)" >< banner ) {
+      #
+      # nb: Keep the PHP/ banner in sync with the one of check_php_banner()
+      if( "(Ubuntu)" >< banner || ( "PHP/" >< banner && "ubuntu" >< banner ) ) {
+        if( "Apache/2.4.34 (Ubuntu)" >< banner || "PHP/7.2.10-0ubuntu1" >< banner ) {
+          register_and_report_os( os:"Ubuntu", version:"18.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+        } else if( "Apache/2.4.29 (Ubuntu)" >< banner || "PHP/7.2.3-1ubuntu1" >< banner ) {
           register_and_report_os( os:"Ubuntu", version:"18.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
         } else {
           register_and_report_os( os:"Ubuntu", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
@@ -871,7 +882,7 @@ function check_php_banner( port, host ) {
 
   phpBanner = egrep( pattern:"^X-Powered-By: PHP/.*$", string:phpBanner, icase:TRUE );
   if( ! phpBanner ) {
-    # nb: Currently set by sw_apcu_info.nasl and phpinfo.nasl but could be extended by other PHP scripts providing such info
+    # nb: Currently set by sw_apcu_info.nasl and gb_phpinfo_output_detect.nasl but could be extended by other PHP scripts providing such info
     phpscriptsUrls = get_kb_list( "php/banner/from_scripts/" + host + "/" + port + "/urls" );
     if( phpscriptsUrls && is_array( phpscriptsUrls ) ) {
       foreach phpscriptsUrl( phpscriptsUrls ) {
@@ -1003,14 +1014,23 @@ function check_php_banner( port, host ) {
     } else if( "~bionic" >< phpBanner ) {
       register_and_report_os( os:"Ubuntu", version:"18.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:phpBanner, desc:SCRIPT_DESC, runs_key:"unixoide" );
       return;
+    } else if( "~cosmic" >< phpBanner ) {
+      register_and_report_os( os:"Ubuntu", version:"18.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:phpBanner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+      return;
     }
 
     # X-Powered-By: PHP/7.2.3-1ubuntu1
+    #
     # nb: Newer PHP versions on Ubuntu doesn't use a "expose_php = On" but still trying to detect it here...
+    #
     # TODO: Check and add banners of all Ubuntu versions. Take care of versions which
     # exists between multiple Ubuntu releases and register only the highest Ubuntu version.
+    #
+    # nb: Keep in sync with the PHP banner in check_http_banner()
     if( "ubuntu" >< phpBanner ) {
-      if( "PHP/7.2.3-1ubuntu1" >< phpBanner ) {
+      if( "PHP/7.2.10-0ubuntu1" >< phpBanner ) {
+        register_and_report_os( os:"Ubuntu", version:"18.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:phpBanner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+      } else if( "PHP/7.2.3-1ubuntu1" >< phpBanner ) {
         register_and_report_os( os:"Ubuntu", version:"18.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:phpBanner, desc:SCRIPT_DESC, runs_key:"unixoide" );
       } else {
         register_and_report_os( os:"Ubuntu", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:phpBanner, desc:SCRIPT_DESC, runs_key:"unixoide" );

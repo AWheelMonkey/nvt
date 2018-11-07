@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nmap_ms_sql_info.nasl 10595 2018-07-24 13:51:36Z cfischer $
+# $Id: gb_nmap_ms_sql_info.nasl 12115 2018-10-26 09:30:41Z cfischer $
 #
 # Wrapper for Nmap MS SQL Info NSE script.
 #
@@ -29,8 +29,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801813");
-  script_version("$Revision: 10595 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-24 15:51:36 +0200 (Tue, 24 Jul 2018) $");
+  script_version("$Revision: 12115 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 11:30:41 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2011-01-20 07:52:11 +0100 (Thu, 20 Jan 2011)");
   script_tag(name:"cvss_base", value:"5.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:N/A:N");
@@ -48,7 +48,9 @@ if(description)
   script_tag(name:"summary", value:"This script attempts to extract information from Microsoft SQL
   Server instances.
 
-  This is a wrapper on the Nmap Security Scanner's (http://nmap.org) ms-sql-info.nse.");
+  This is a wrapper on the Nmap Security Scanner's ms-sql-info.nse.");
+
+  script_tag(name:"solution_type", value:"Mitigation");
 
   exit(0);
 }
@@ -70,16 +72,28 @@ if( pref = script_get_preference("mssql.timeout :")){
   args[i++] = "mssql.timeout="+pref;
 }
 
-if(i > 0)
-{
-  scriptArgs= "--script-args=";
+if(i > 0) {
+  scriptArgs = "--script-args=";
   foreach arg(args) {
     scriptArgs += arg + ",";
   }
-  argv = make_list(argv,scriptArgs);
+  argv = make_list(argv, scriptArgs);
 }
 
-res = pread(cmd: "nmap", argv: argv);
+if(TARGET_IS_IPV6())
+  argv = make_list(argv, "-6");
+
+timing_policy = get_kb_item("Tools/nmap/timing_policy");
+if(timing_policy =~ '^-T[0-5]$')
+  argv = make_list(argv, timing_policy);
+
+source_iface = get_preference("source_iface");
+if(source_iface =~ '^[0-9a-zA-Z:_]+$') {
+  argv = make_list(argv, "-e");
+  argv = make_list(argv, source_iface);
+}
+
+res = pread(cmd:"nmap", argv:argv);
 if(res)
 {
   foreach line (split(res))

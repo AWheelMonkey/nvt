@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nmap_oracle_sid_brute.nasl 10607 2018-07-25 09:09:12Z cfischer $
+# $Id: gb_nmap_oracle_sid_brute.nasl 12115 2018-10-26 09:30:41Z cfischer $
 #
 # Wrapper for Nmap Oracle SID Brute NSE script.
 #
@@ -29,8 +29,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801815");
-  script_version("$Revision: 10607 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-25 11:09:12 +0200 (Wed, 25 Jul 2018) $");
+  script_version("$Revision: 12115 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 11:30:41 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2011-01-21 13:17:02 +0100 (Fri, 21 Jan 2011)");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
@@ -48,7 +48,9 @@ if(description)
   script_tag(name:"summary", value:"This script attempts to guess Oracle instance/SID names against the
   TNS-listener.
 
-  This is a wrapper on the Nmap Security Scanner's (http://nmap.org) oracle-sid-brute.nse.");
+  This is a wrapper on the Nmap Security Scanner's oracle-sid-brute.nse.");
+
+  script_tag(name:"solution_type", value:"Mitigation");
 
   exit(0);
 }
@@ -69,7 +71,20 @@ if( pref = script_get_preference("oraclesids :")){
   argv = make_list(argv, "--script-args=oraclesids=" + pref);
 }
 
-res = pread(cmd: "nmap", argv: argv);
+if(TARGET_IS_IPV6())
+  argv = make_list(argv, "-6");
+
+timing_policy = get_kb_item("Tools/nmap/timing_policy");
+if(timing_policy =~ '^-T[0-5]$')
+  argv = make_list(argv, timing_policy);
+
+source_iface = get_preference("source_iface");
+if(source_iface =~ '^[0-9a-zA-Z:_]+$') {
+  argv = make_list(argv, "-e");
+  argv = make_list(argv, source_iface);
+}
+
+res = pread(cmd:"nmap", argv:argv);
 
 if(res)
 {

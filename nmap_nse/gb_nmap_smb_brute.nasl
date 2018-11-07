@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nmap_smb_brute.nasl 10579 2018-07-23 13:27:53Z cfischer $
+# $Id: gb_nmap_smb_brute.nasl 12115 2018-10-26 09:30:41Z cfischer $
 #
 # Wrapper for Nmap SMB Brute NSE script.
 #
@@ -29,8 +29,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801268");
-  script_version("$Revision: 10579 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-23 15:27:53 +0200 (Mon, 23 Jul 2018) $");
+  script_version("$Revision: 12115 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 11:30:41 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2010-09-08 13:20:44 +0200 (Wed, 08 Sep 2010)");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
@@ -64,7 +64,9 @@ if(description)
   script_tag(name:"summary", value:"This script attempts to get SMB login credentials by guessing
   usernames and passwords.
 
-  This is a wrapper on the Nmap Security Scanner's (http://nmap.org) smb-brute.nse.");
+  This is a wrapper on the Nmap Security Scanner's smb-brute.nse.");
+
+  script_tag(name:"solution_type", value:"Mitigation");
 
   exit(0);
 }
@@ -151,16 +153,28 @@ if( pref = script_get_preference("randomseed :")){
   args[i++] = "randomseed="+pref;
 }
 
-if(i > 0)
-{
-  scriptArgs= "--script-args=";
+if(i > 0) {
+  scriptArgs = "--script-args=";
   foreach arg(args) {
     scriptArgs += arg + ",";
   }
-  argv = make_list(argv,scriptArgs);
+  argv = make_list(argv, scriptArgs);
 }
 
-res = pread(cmd: "nmap", argv: argv);
+if(TARGET_IS_IPV6())
+  argv = make_list(argv, "-6");
+
+timing_policy = get_kb_item("Tools/nmap/timing_policy");
+if(timing_policy =~ '^-T[0-5]$')
+  argv = make_list(argv, timing_policy);
+
+source_iface = get_preference("source_iface");
+if(source_iface =~ '^[0-9a-zA-Z:_]+$') {
+  argv = make_list(argv, "-e");
+  argv = make_list(argv, source_iface);
+}
+
+res = pread(cmd:"nmap", argv:argv);
 if(res)
 {
   foreach line (split(res))

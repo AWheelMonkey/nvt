@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_hp_smh_insight_diag_xss_vuln_win.nasl 11262 2018-09-06 09:06:46Z cfischer $
+# $Id: gb_hp_smh_insight_diag_xss_vuln_win.nasl 12076 2018-10-25 08:39:24Z cfischer $
 #
 # HP SMH Insight Diagnostics Cross Site Scripting Vulnerability - Windows
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.800192");
-  script_version("$Revision: 11262 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-06 11:06:46 +0200 (Thu, 06 Sep 2018) $");
+  script_version("$Revision: 12076 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-25 10:39:24 +0200 (Thu, 25 Oct 2018) $");
   script_tag(name:"creation_date", value:"2011-01-18 07:48:41 +0100 (Tue, 18 Jan 2011)");
   script_cve_id("CVE-2010-4111");
   script_tag(name:"cvss_base", value:"4.3");
@@ -46,9 +46,7 @@ if(description)
   script_xref(name:"URL", value:"http://h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c02652463");
 
   script_tag(name:"impact", value:"Successful exploitation will allow attackers to inject arbitrary HTML
-  code in the context of an affected site.
-
-  Impact Level: Application");
+  code in the context of an affected site.");
 
   script_tag(name:"affected", value:"HP Insight Diagnostics Online Edition before 8.5.1.3712 on Windows.");
 
@@ -57,7 +55,7 @@ if(description)
   session in the context of an affected site.");
 
   script_tag(name:"solution", value:"Upgrade to 8.5.1.3712 or higher versions or refer vendor advisory for
-  update, http://h20000.www2.hp.com/bizsupport/TechSupport/Document.jsp?objectID=c02652463");
+  update.");
 
   script_tag(name:"summary", value:"The host is running HP SMH with Insight Diagnostics and is prone
   to cross-site scripting vulnerability.");

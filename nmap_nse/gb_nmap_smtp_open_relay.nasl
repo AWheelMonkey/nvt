@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nmap_smtp_open_relay.nasl 10579 2018-07-23 13:27:53Z cfischer $
+# $Id: gb_nmap_smtp_open_relay.nasl 12115 2018-10-26 09:30:41Z cfischer $
 #
 # Wrapper for Nmap SMTP Open Relay NSE script.
 #
@@ -29,8 +29,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801601");
-  script_version("$Revision: 10579 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-23 15:27:53 +0200 (Mon, 23 Jul 2018) $");
+  script_version("$Revision: 12115 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 11:30:41 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2010-10-08 10:33:58 +0200 (Fri, 08 Oct 2010)");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
@@ -50,7 +50,9 @@ if(description)
 
   script_tag(name:"summary", value:"This script attempts to check if a SMTP server is vulnerable to mail relaying.
 
-  This is a wrapper on the Nmap Security Scanner's (http://nmap.org) smtp-open-relay.nse");
+  This is a wrapper on the Nmap Security Scanner's smtp-open-relay.nse");
+
+  script_tag(name:"solution_type", value:"Mitigation");
 
   exit(0);
 }
@@ -84,16 +86,28 @@ port = get_smtp_port(default:25);
 
 argv = make_list("nmap", "--script=smtp-open-relay.nse", "-p", port, get_host_ip());
 
-if(i > 0)
-{
-  scriptArgs= "--script-args=";
+if(i > 0) {
+  scriptArgs = "--script-args=";
   foreach arg(args) {
     scriptArgs += arg + ",";
   }
-  argv = make_list(argv,scriptArgs);
+  argv = make_list(argv, scriptArgs);
 }
 
-res = pread(cmd: "nmap", argv: argv);
+if(TARGET_IS_IPV6())
+  argv = make_list(argv, "-6");
+
+timing_policy = get_kb_item("Tools/nmap/timing_policy");
+if(timing_policy =~ '^-T[0-5]$')
+  argv = make_list(argv, timing_policy);
+
+source_iface = get_preference("source_iface");
+if(source_iface =~ '^[0-9a-zA-Z:_]+$') {
+  argv = make_list(argv, "-e");
+  argv = make_list(argv, source_iface);
+}
+
+res = pread(cmd:"nmap", argv:argv);
 if(res)
 {
   foreach line (split(res))

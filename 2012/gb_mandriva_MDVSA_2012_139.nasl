@@ -23,76 +23,67 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 ###############################################################################
 
-include("revisions-lib.inc");
-tag_insight = "Multiple vulnerabilities has been discovered and corrected in
+if(description)
+{
+  script_xref(name:"URL", value:"http://www.mandriva.com/en/support/security/advisories/?name=MDVSA-2012:139");
+  script_oid("1.3.6.1.4.1.25623.1.0.831725");
+  script_version("$Revision: 11985 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-19 12:24:37 +0200 (Fri, 19 Oct 2018) $");
+  script_tag(name:"creation_date", value:"2012-08-21 11:46:08 +0530 (Tue, 21 Aug 2012)");
+  script_cve_id("CVE-2012-3488", "CVE-2012-3489");
+  script_tag(name:"cvss_base", value:"4.9");
+  script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:S/C:P/I:P/A:N");
+  script_xref(name:"MDVSA", value:"2012:139");
+  script_name("Mandriva Update for postgresql MDVSA-2012:139 (postgresql)");
+
+  script_tag(name:"summary", value:"Check for the Version of postgresql");
+  script_category(ACT_GATHER_INFO);
+  script_copyright("Copyright (c) 2012 Greenbone Networks GmbH");
+  script_family("Mandrake Local Security Checks");
+  script_dependencies("gather-package-list.nasl");
+  script_mandatory_keys("ssh/login/mandriva_mandrake_linux", "ssh/login/release", re:"ssh/login/release=MNDK_(2011\.0|mes5\.2)");
+  script_tag(name:"affected", value:"postgresql on Mandriva Linux 2011.0,
+  Mandriva Enterprise Server 5.2");
+  script_tag(name:"solution", value:"Please Install the Updated Packages.");
+  script_tag(name:"insight", value:"Multiple vulnerabilities has been discovered and corrected in
   postgresql:
 
-  Prevent access to external files/URLs via contrib/xml2&#039;s xslt_process()
+  Prevent access to external files/URLs via contrib/xml2's xslt_process()
   (Peter Eisentraut). libxslt offers the ability to read and write both
   files and URLs through stylesheet commands, thus allowing unprivileged
   database users to both read and write data with the privileges of the
-  database server. Disable that through proper use of libxslt&#039;s security
-  options (CVE-2012-3488). Also, remove xslt_process()&#039;s ability to
+  database server. Disable that through proper use of libxslt's security
+  options (CVE-2012-3488). Also, remove xslt_process()'s ability to
   fetch documents and stylesheets from external files/URLs. While this
   was a documented feature, it was long regarded as a bad idea. The
   fix for CVE-2012-3489 broke that capability, and rather than expend
-  effort on trying to fix it, we&#039;re just going to summarily remove it.
+  effort on trying to fix it, we're just going to summarily remove it.
 
   Prevent access to external files/URLs via XML entity references (Noah
   Misch, Tom Lane). xml_parse() would attempt to fetch external files or
   URLs as needed to resolve DTD and entity references in an XML value,
   thus allowing unprivileged database users to attempt to fetch data
   with the privileges of the database server. While the external data
-  wouldn&#039;t get returned directly to the user, portions of it could
-  be exposed in error messages if the data didn&#039;t parse as valid XML;
+  wouldn't get returned directly to the user, portions of it could
+  be exposed in error messages if the data didn't parse as valid XML;
   and in any case the mere ability to check existence of a file might
   be useful to an attacker (CVE-2012-3489).
 
   This advisory provides the latest versions of PostgreSQL that is not
-  vulnerable to these issues.";
-
-tag_affected = "postgresql on Mandriva Linux 2011.0,
-  Mandriva Enterprise Server 5.2";
-tag_solution = "Please Install the Updated Packages.";
-
-
-
-if(description)
-{
-  script_xref(name : "URL" , value : "http://www.mandriva.com/en/support/security/advisories/?name=MDVSA-2012:139");
-  script_oid("1.3.6.1.4.1.25623.1.0.831725");
-  script_version("$Revision: 9352 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-04-06 09:13:02 +0200 (Fri, 06 Apr 2018) $");
-  script_tag(name:"creation_date", value:"2012-08-21 11:46:08 +0530 (Tue, 21 Aug 2012)");
-  script_cve_id("CVE-2012-3488", "CVE-2012-3489");
-  script_tag(name:"cvss_base", value:"4.9");
-  script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:S/C:P/I:P/A:N");
-  script_xref(name: "MDVSA", value: "2012:139");
-  script_name("Mandriva Update for postgresql MDVSA-2012:139 (postgresql)");
-
-  script_tag(name: "summary" , value: "Check for the Version of postgresql");
-  script_category(ACT_GATHER_INFO);
-  script_copyright("Copyright (c) 2012 Greenbone Networks GmbH");
-  script_family("Mandrake Local Security Checks");
-  script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/mandriva_mandrake_linux", "ssh/login/release");
-  script_tag(name : "affected" , value : tag_affected);
-  script_tag(name : "solution" , value : tag_solution);
-  script_tag(name : "insight" , value : tag_insight);
+  vulnerable to these issues.");
   script_tag(name:"qod_type", value:"package");
   script_tag(name:"solution_type", value:"VendorFix");
+
   exit(0);
 }
 
-
+include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "MNDK_2011.0")
 {
@@ -181,7 +172,7 @@ if(release == "MNDK_2011.0")
     exit(0);
   }
 
-  if (__pkg_match) exit(99); # Not vulnerable.
+  if (__pkg_match) exit(99);
   exit(0);
 }
 
@@ -273,6 +264,6 @@ if(release == "MNDK_mes5.2")
     exit(0);
   }
 
-  if (__pkg_match) exit(99); # Not vulnerable.
+  if (__pkg_match) exit(99);
   exit(0);
 }

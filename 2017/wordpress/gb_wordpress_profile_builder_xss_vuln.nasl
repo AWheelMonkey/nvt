@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_wordpress_profile_builder_xss_vuln.nasl 7381 2017-10-09 07:01:02Z asteins $
+# $Id: gb_wordpress_profile_builder_xss_vuln.nasl 12106 2018-10-26 06:33:36Z cfischer $
 #
 # WordPress Profile Builder Plugin XSS Vulnerability
 #
@@ -30,17 +30,17 @@ CPE = "cpe:/a:wordpress:wordpress";
 if (description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.112072");
-  script_version("$Revision: 7381 $");
-  script_tag(name: "last_modification", value: "$Date: 2017-10-09 09:01:02 +0200 (Mon, 09 Oct 2017) $");
-  script_tag(name: "creation_date", value: "2017-10-09 09:12:51 +0200 (Mon, 09 Oct 2017)");
+  script_version("$Revision: 12106 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 08:33:36 +0200 (Fri, 26 Oct 2018) $");
+  script_tag(name:"creation_date", value:"2017-10-09 09:12:51 +0200 (Mon, 09 Oct 2017)");
   script_tag(name:"cvss_base", value:"4.3");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:N/I:P/A:N");
 
   script_cve_id("CVE-2014-8492");
 
-  script_tag(name: "qod_type", value: "remote_banner");
+  script_tag(name:"qod_type", value:"remote_banner");
 
-  script_tag(name: "solution_type", value: "VendorFix");
+  script_tag(name:"solution_type", value:"VendorFix");
 
   script_name("WordPress Profile Builder Plugin XSS Vulnerability");
 
@@ -51,17 +51,17 @@ if (description)
   script_dependencies("secpod_wordpress_detect_900182.nasl");
   script_mandatory_keys("wordpress/installed");
 
-  script_tag(name: "summary", value: "WordPress plugin Profile Builder is vulnerable to multiple cross-site scripting (XSS) vulnerabilities
+  script_tag(name:"summary", value:"WordPress plugin Profile Builder is vulnerable to multiple cross-site scripting (XSS) vulnerabilities
       in assets/misc/fallback-page.php that allow remote attackers to inject arbitrary web script or HTML via the (1) site_name, (2) message, or (3) site_url parameter.");
 
-  script_tag(name: "vuldetect", value: "Checks the version.");
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
 
-  script_tag(name: "affected", value: "WordPress Profile Builder plugin before version 2.0.3.");
+  script_tag(name:"affected", value:"WordPress Profile Builder plugin before version 2.0.3.");
 
-  script_tag(name: "solution", value: "Update to version 2.0.3 or later.");
+  script_tag(name:"solution", value:"Update to version 2.0.3 or later.");
 
-  script_xref(name: "URL", value: "https://g0blin.co.uk/cve-2014-8492/");
-  script_xref(name: "URL", value: "https://wpvulndb.com/vulnerabilities/8239");
+  script_xref(name:"URL", value:"https://g0blin.co.uk/cve-2014-8492/");
+  script_xref(name:"URL", value:"https://wpvulndb.com/vulnerabilities/8239");
 
   exit(0);
 }

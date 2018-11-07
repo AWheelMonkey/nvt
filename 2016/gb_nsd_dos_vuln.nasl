@@ -1,6 +1,6 @@
 ##############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nsd_dos_vuln.nasl 5441 2017-02-28 08:41:33Z cfi $
+# $Id: gb_nsd_dos_vuln.nasl 12096 2018-10-25 12:26:02Z asteins $
 #
 # NSD (Name Server Daemon) AXFR Response Denial of Service Vulnerability
 #
@@ -30,8 +30,8 @@ CPE = "cpe:/a:nlnetlabs:nsd";
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.106121");
-  script_version("$Revision: 5441 $");
-  script_tag(name:"last_modification", value:"$Date: 2017-02-28 09:41:33 +0100 (Tue, 28 Feb 2017) $");
+  script_version("$Revision: 12096 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-25 14:26:02 +0200 (Thu, 25 Oct 2018) $");
   script_tag(name:"creation_date", value:"2016-07-08 10:27:46 +0700 (Fri, 08 Jul 2016)");
   script_tag(name:"cvss_base", value:"7.8");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:C");
@@ -49,7 +49,7 @@ if(description)
 
   script_tag(name:"summary", value:"NSD (Name Server Daemon) is prone to a denial of service vulnerability.");
 
-  script_tag(name:"vuldetect", value:"Checks the version.");
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
 
   script_tag(name:"insight", value:"Primary DNS servers may cause a denial of service (secondary DNS server
   crash) via a large AXFR response, and possibly allows IXFR servers to cause a denial of service (IXFR client
@@ -61,11 +61,12 @@ if(description)
 
   script_tag(name:"affected", value:"Version <= 4.1.10");
 
-  script_tag(name:"solution", value:"Update to version 4.1.11. For updates, refer to https://www.nlnetlabs.nl/projects/nsd/");
+  script_tag(name:"solution", value:"Update to version 4.1.11.");
 
   script_tag(name:"qod_type", value:"remote_banner_unreliable");
   script_tag(name:"solution_type", value:"VendorFix");
 
+  script_xref(name:"URL", value:"https://www.nlnetlabs.nl/projects/nsd/");
   exit(0);
 }
 

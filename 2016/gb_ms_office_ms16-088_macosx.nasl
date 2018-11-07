@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_ms_office_ms16-088_macosx.nasl 11614 2018-09-26 07:39:28Z asteins $
+# $Id: gb_ms_office_ms16-088_macosx.nasl 11989 2018-10-19 11:25:26Z cfischer $
 #
 # Microsoft Office Multiple Remote Code Execution Vulnerabilities-3170008(Mac OS X)
 #
@@ -29,12 +29,12 @@ CPE = "cpe:/a:microsoft:office";
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.807867");
-  script_version("$Revision: 11614 $");
+  script_version("$Revision: 11989 $");
   script_cve_id("CVE-2016-3280", "CVE-2016-3281", "CVE-2016-3282", "CVE-2016-3284");
   script_bugtraq_id(91582, 91588, 91589, 91594);
   script_tag(name:"cvss_base", value:"9.3");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:C/I:C/A:C");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-26 09:39:28 +0200 (Wed, 26 Sep 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-19 13:25:26 +0200 (Fri, 19 Oct 2018) $");
   script_tag(name:"creation_date", value:"2016-07-13 16:17:51 +0530 (Wed, 13 Jul 2016)");
   script_tag(name:"qod_type", value:"executable_version");
   script_name("Microsoft Office Multiple Remote Code Execution Vulnerabilities-3170008(Mac OS X)");
@@ -44,7 +44,7 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
 
-  script_tag(name:"insight", value:"Multiple flaws exists as office software
+  script_tag(name:"insight", value:"Multiple flaws exist as office software
   fails to properly handle objects in memory.");
 
   script_tag(name:"impact", value:"Successful exploitation will allow remote
@@ -53,8 +53,7 @@ if(description)
   script_tag(name:"affected", value:"Microsoft Office 2011 on Mac OS X
   Microsoft Office 2016 on Mac OS X");
 
-  script_tag(name:"solution", value:"Apply the patch from below link,
-  https://technet.microsoft.com/library/security/MS16-088");
+  script_tag(name:"solution", value:"Apply the patch from the referenced advisory.");
 
   script_tag(name:"solution_type", value:"VendorFix");
 

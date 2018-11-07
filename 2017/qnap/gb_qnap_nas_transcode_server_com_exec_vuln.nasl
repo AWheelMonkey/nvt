@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_qnap_nas_transcode_server_com_exec_vuln.nasl 9917 2018-05-22 08:38:12Z ckuersteiner $
+# $Id: gb_qnap_nas_transcode_server_com_exec_vuln.nasl 12043 2018-10-23 14:16:52Z mmartin $
 #
 # QNAP NAS 'Transcode Server' Command Execution Vulnerability
 #
@@ -30,10 +30,11 @@ CPE = "cpe:/h:qnap";
 if (description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.811727");
-  script_version("$Revision: 9917 $");
+  script_version("$Revision: 12043 $");
   script_tag(name:"cvss_base", value:"10.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:C/I:C/A:C");
-  script_tag(name:"last_modification", value:"$Date: 2018-05-22 10:38:12 +0200 (Tue, 22 May 2018) $");
+  script_cve_id("CVE-2017-13067");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-23 16:16:52 +0200 (Tue, 23 Oct 2018) $");
   script_tag(name:"creation_date", value:"2017-09-01 10:43:16 +0530 (Fri, 01 Sep 2017)");
   script_tag(name:"qod_type", value:"remote_banner");
   script_name("QNAP NAS 'Transcode Server' Command Execution Vulnerability");
@@ -41,29 +42,24 @@ if (description)
   script_tag(name:"summary", value:"This host is running QNAP NAS device and
   is prone to code execution vulnerability.");
 
-  script_tag(name:"vuldetect", value:"Get the installed version with the help of
-  detect nvt and check whether it is vulnerable or not.");
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
 
   script_tag(name:"insight", value:"The flaw is due to error in 'rmfile' command
   in Transcode Server which does not filter certain special characters and allow
   them to pass in the command.");
 
   script_tag(name:"impact", value:"Successful exploitation will allow remote
-  attackers to execute arbitrary commands on the remote affected device.
-
-  Impact Level: System/Application");
+  attackers to execute arbitrary commands on the remote affected device.");
 
   script_tag(name:"affected", value:"QNAP TS-431 with firmware version 4.3.3.0262
   (20170727) and QNAP_TS-131. Many other QNAP models may also be affected.");
 
-  script_tag(name: "solution" , value: "No known solution is available as of 22nd May, 2018. Information regarding
-this issue will be updated once solution details are available.");
+  script_tag(name:"solution", value:"Upgrade to the latest version.");
+  script_tag(name:"solution_type", value:"VendorFix");
 
-  script_tag(name:"solution_type", value:"NoneAvailable");
-
-  script_xref(name: "URL", value: "http://www.exploitee.rs/index.php/QNAP_TS-131");
-  script_xref(name: "URL", value: "https://www.exploit-db.com/exploits/42587");
-
+  script_xref(name:"URL", value:"http://www.exploitee.rs/index.php/QNAP_TS-131");
+  script_xref(name:"URL", value:"https://www.exploit-db.com/exploits/42587");
+  script_xref(name:"URL", value:"https://www.cvedetails.com/cve/cve-2017-13067");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2017 Greenbone Networks GmbH");
   script_family("Web application abuses");
@@ -97,7 +93,7 @@ checkvers = version + '.' + build;
 if((model == "TS-431" && checkvers == "4.3.3.0262.20170727") ||
    (model == "TS-131"))
 {
-  report = report_fixed_ver(installed_version: version, installed_build: build, fixed_version: "None Available");
+  report = report_fixed_ver(installed_version: version, installed_build: build, fixed_version: "4.3.3.0299.20170901");
   security_message(port:qtsPort, data: report);
   exit(0);
 }

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: secpod_nfs_rpc_statd_mult_format_string_vuln.nasl 10969 2018-08-15 06:28:22Z cfischer $
+# $Id: secpod_nfs_rpc_statd_mult_format_string_vuln.nasl 12057 2018-10-24 12:23:19Z cfischer $
 #
 # Nfs-utils rpc.statd Multiple Remote Format String Vulnerabilities
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.902725");
-  script_version("$Revision: 10969 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-15 08:28:22 +0200 (Wed, 15 Aug 2018) $");
+  script_version("$Revision: 12057 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-24 14:23:19 +0200 (Wed, 24 Oct 2018) $");
   script_tag(name:"creation_date", value:"2011-09-09 17:36:48 +0200 (Fri, 09 Sep 2011)");
   script_tag(name:"cvss_base", value:"10.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:C/I:C/A:C");
@@ -38,24 +38,22 @@ if(description)
   script_copyright("Copyright (c) 2011 SecPod");
   script_category(ACT_ATTACK);
   script_family("RPC");
-  script_dependencies("secpod_rpc_portmap.nasl");
+  script_dependencies("secpod_rpc_portmap_tcp.nasl");
   script_require_keys("rpc/portmap");
 
   script_xref(name:"URL", value:"http://www.cert.org/advisories/CA-2000-17.html");
   script_xref(name:"URL", value:"http://www.iss.net/security_center/reference/vuln/RPC_Statd_Format_Attack.htm");
   script_xref(name:"URL", value:"http://support.coresecurity.com/impact/exploits/191000d57f477b31f74df301b1d96722.html");
+  script_xref(name:"URL", value:"http://sourceforge.net/projects/nfs/files/nfs-utils/");
 
   script_tag(name:"impact", value:"Successful exploitation could allow attackers to execute arbitrary code with
-  the privileges of the rpc.statd process, typically root.
-
-  Impact Level: System/Application");
+  the privileges of the rpc.statd process, typically root.");
 
   script_tag(name:"insight", value:"The flaws are due to errors in rpc.statd/kstatd daemons logging
   system. A call to syslog in the program takes data directly from the remote
   user, this data could include printf-style format specifiers.");
 
-  script_tag(name:"solution", value:"Upgrade to latest of nfs-utils version 0.1.9.1 or later,
-  For updates refer to http://sourceforge.net/projects/nfs/files/nfs-utils/");
+  script_tag(name:"solution", value:"Upgrade to latest of nfs-utils version 0.1.9.1 or later.");
 
   script_tag(name:"summary", value:"The host is running statd service and is prone to multiple remote
   format string vulnerabilities.");

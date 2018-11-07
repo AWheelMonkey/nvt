@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_vsftpd_backdoor_07_2011.nasl 5026 2017-01-18 09:59:52Z cfi $
+# $Id: gb_vsftpd_backdoor_07_2011.nasl 12076 2018-10-25 08:39:24Z cfischer $
 #
 # vsftpd Compromised Source Packages Backdoor Vulnerability
 #
@@ -29,9 +29,9 @@ CPE = 'cpe:/a:beasts:vsftpd';
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.103185");
-  script_version("$Revision: 5026 $");
+  script_version("$Revision: 12076 $");
   script_bugtraq_id(48539);
-  script_tag(name:"last_modification", value:"$Date: 2017-01-18 10:59:52 +0100 (Wed, 18 Jan 2017) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-25 10:39:24 +0200 (Thu, 25 Oct 2018) $");
   script_tag(name:"creation_date", value:"2011-07-05 14:24:57 +0200 (Tue, 05 Jul 2011)");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
@@ -48,7 +48,7 @@ if(description)
   script_xref(name:"URL", value:"https://security.appspot.com/vsftpd.html");
 
   script_tag(name:"solution", value:"The repaired package can be downloaded from
-  https://security.appspot.com/vsftpd.html. Please validate the package with its signature.");
+  the referenced link. Please validate the package with its signature.");
 
   script_tag(name:"summary", value:"vsftpd is prone to a backdoor vulnerability.");
 
@@ -80,17 +80,17 @@ function check_vuln() {
 
   if(egrep(pattern:"uid=[0-9]+.*gid=[0-9]+", string:buf)) {
     return TRUE;
-  }  
+  }
 
   return FALSE;
-}  
+}
 
 
 if( check_vuln() ) { # check if there already exist a shell on port 6200
   security_message(port:shellport); # report this vuln on both ports. Just to be sure...
   security_message(port:port);
   exit(0);
-}  
+}
 
 
 soc = open_sock_tcp(port);
@@ -105,7 +105,7 @@ for(i=0;i<=3;i++) {
   send(socket:soc, data:string("USER X:)\r\n"));
   ftp_recv_line(socket:soc);
 
-  send(socket:soc, data:string("PASS X\r\n"));     
+  send(socket:soc, data:string("PASS X\r\n"));
   ftp_recv_line(socket:soc);
 
   sleep(10); # slow hosts need some time to spawn the shell
@@ -115,7 +115,7 @@ for(i=0;i<=3;i++) {
     security_message(port:shellport); # reprt this vuln on both ports. Just to be sure...
     security_message(port:port);
     exit(0);
-  } 
+  }
 }
 
 close(soc);

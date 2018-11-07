@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nmap_mysql_info.nasl 10580 2018-07-23 13:56:07Z cfischer $
+# $Id: gb_nmap_mysql_info.nasl 12115 2018-10-26 09:30:41Z cfischer $
 #
 # Wrapper for Nmap MySQL Info NSE script.
 #
@@ -29,8 +29,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801282");
-  script_version("$Revision: 10580 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-23 15:56:07 +0200 (Mon, 23 Jul 2018) $");
+  script_version("$Revision: 12115 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 11:30:41 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2010-09-23 08:22:30 +0200 (Thu, 23 Sep 2010)");
   script_tag(name:"cvss_base", value:"4.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:S/C:P/I:N/A:N");
@@ -46,7 +46,9 @@ if(description)
   script_tag(name:"summary", value:"This script attempts to connect to a MySQL server and extract
   information.
 
-  This is a wrapper on the Nmap Security Scanner's (http://nmap.org) mysql-info.nse");
+  This is a wrapper on the Nmap Security Scanner's mysql-info.nse");
+
+  script_tag(name:"solution_type", value:"Mitigation");
 
   exit(0);
 }
@@ -66,7 +68,23 @@ if(!get_port_state(port)){
   exit(0);
 }
 
-res = pread(cmd: "nmap", argv: make_list("nmap", "--script=mysql-info.nse", "-p", port, get_host_ip()));
+argv = make_list("nmap", "--script=mysql-info.nse", "-p", port, get_host_ip());
+
+if(TARGET_IS_IPV6())
+  argv = make_list(argv, "-6");
+
+timing_policy = get_kb_item("Tools/nmap/timing_policy");
+if(timing_policy =~ '^-T[0-5]$')
+  argv = make_list(argv, timing_policy);
+
+source_iface = get_preference("source_iface");
+if(source_iface =~ '^[0-9a-zA-Z:_]+$') {
+  argv = make_list(argv, "-e");
+  argv = make_list(argv, source_iface);
+}
+
+res = pread(cmd:"nmap", argv:argv);
+
 if(res)
 {
   foreach line (split(res))

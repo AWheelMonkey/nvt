@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_ubuntu_USN_3792_1.nasl 11927 2018-10-16 12:17:30Z santu $
+# $Id: gb_ubuntu_USN_3792_1.nasl 12116 2018-10-26 10:01:35Z mmartin $
 #
 # Ubuntu Update for net-snmp USN-3792-1
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.843660");
-  script_version("$Revision: 11927 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-16 14:17:30 +0200 (Tue, 16 Oct 2018) $");
+  script_version("$Revision: 12116 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 12:01:35 +0200 (Fri, 26 Oct 2018) $");
   script_tag(name:"creation_date", value:"2018-10-16 06:20:59 +0200 (Tue, 16 Oct 2018)");
   script_cve_id("CVE-2018-18065");
   script_tag(name:"cvss_base", value:"5.0");
@@ -46,20 +46,20 @@ to crash, resulting in a denial of service.");
   script_tag(name:"solution", value:"Please install the updated packages.");
 
   script_xref(name:"USN", value:"3792-1");
-  script_xref(name:"URL", value:"https://lists.ubuntu.com/archives/ubuntu-security-announce/2018-October/004618.html");
+  script_xref(name:"URL", value:"http://www.ubuntu.com/usn/usn-3792-1/");
   script_tag(name:"solution_type", value:"VendorFix");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("Ubuntu Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/ubuntu_linux", "ssh/login/packages");
+  script_mandatory_keys("ssh/login/ubuntu_linux", "ssh/login/packages", re:"ssh/login/release=UBUNTU(14\.04 LTS|18\.04 LTS|16\.04 LTS)");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-deb.inc");
 
-release = get_kb_item("ssh/login/release");
+release = dpkg_get_ssh_release();
 
 res = "";
 if(release == NULL){

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_logitech_media_server_dom_xss_vuln.nasl 10237 2018-06-18 14:06:54Z cfischer $
+# $Id: gb_logitech_media_server_dom_xss_vuln.nasl 12085 2018-10-25 10:07:30Z mmartin $
 #
 # Logitech Media Server DOM Based XSS Vulnerability
 #
@@ -29,11 +29,11 @@ CPE = "cpe:/a:logitech:media_server";
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.811878");
-  script_version("$Revision: 10237 $");
+  script_version("$Revision: 12085 $");
   script_cve_id("CVE-2017-15687");
   script_tag(name:"cvss_base", value:"4.3");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:N/I:P/A:N");
-  script_tag(name:"last_modification", value:"$Date: 2018-06-18 16:06:54 +0200 (Mon, 18 Jun 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-25 12:07:30 +0200 (Thu, 25 Oct 2018) $");
   script_tag(name:"creation_date", value:"2017-10-24 18:15:51 +0530 (Tue, 24 Oct 2017)");
   script_name("Logitech Media Server DOM Based XSS Vulnerability");
 
@@ -48,22 +48,18 @@ if(description)
   script_tag(name:"impact", value:"Successful exploitation will allow remote
   users to execute arbitrary script code in the browser of an unsuspecting user
   in the context of the affected site. This may allow the attacker to steal
-  cookie-based authentication credentials and launch other attacks.
-
-  Impact Level: Application");
+  cookie-based authentication credentials and launch other attacks.");
 
   script_tag(name:"affected", value:"Logitech Media Server versions 7.7.3,
   7.7.5, 7.9.1, 7.7.2, 7.7.1, 7.7.6 and 7.9.0");
 
-  script_tag(name:"solution", value:"No known solution is available as of 18th June, 2018. Information
-regarding this issue will be updated once solution details are available.");
-
-  script_tag(name:"solution_type", value:"NoneAvailable");
+  script_tag(name:"solution", value:"No known solution was made available for at least one year since the disclosure of this vulnerability. Likely none will be provided anymore. General solution options are to upgrade to a newer release, disable respective features, remove the product or replace the product by another one.");
+  script_tag(name:"solution_type", value:"WillNotFix");
 
   script_tag(name:"qod_type", value:"remote_banner");
 
-  script_xref(name: "URL", value: "https://fireshellsecurity.team/assets/pdf/DOM-Based-Cross-Site-Scripting-_XSS_-Logitech-Media-Server.pdf");
-  script_xref(name: "URL", value: "https://www.exploit-db.com/exploits/43024");
+  script_xref(name:"URL", value:"https://fireshellsecurity.team/assets/pdf/DOM-Based-Cross-Site-Scripting-_XSS_-Logitech-Media-Server.pdf");
+  script_xref(name:"URL", value:"https://www.exploit-db.com/exploits/43024");
   script_copyright("Copyright (C) 2017 Greenbone Networks GmbH");
   script_category(ACT_GATHER_INFO);
   script_family("Web application abuses");

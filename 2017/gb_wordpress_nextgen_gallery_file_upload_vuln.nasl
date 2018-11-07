@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_wordpress_nextgen_gallery_file_upload_vuln.nasl 7112 2017-09-13 05:48:26Z asteins $
+# $Id: gb_wordpress_nextgen_gallery_file_upload_vuln.nasl 12106 2018-10-26 06:33:36Z cfischer $
 #
 # WordPress NextGEN Gallery Plugin Malicious File Upload Vulnerability
 #
@@ -30,16 +30,16 @@ CPE = "cpe:/a:wordpress:wordpress";
 if (description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.112046");
-  script_version("$Revision: 7112 $");
-  script_tag(name: "last_modification", value: "$Date: 2017-09-13 07:48:26 +0200 (Wed, 13 Sep 2017) $");
-  script_tag(name: "creation_date", value: "2017-09-13 07:56:31 +0200 (Wed, 13 Sep 2017)");
+  script_version("$Revision: 12106 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-10-26 08:33:36 +0200 (Fri, 26 Oct 2018) $");
+  script_tag(name:"creation_date", value:"2017-09-13 07:56:31 +0200 (Wed, 13 Sep 2017)");
   script_tag(name:"cvss_base", value:"9.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:S/C:C/I:C/A:C");
 
   script_cve_id("CVE-2015-9228");
 
-  script_tag(name: "qod_type", value: "remote_banner");
-  script_tag(name: "solution_type", value: "VendorFix");
+  script_tag(name:"qod_type", value:"remote_banner");
+  script_tag(name:"solution_type", value:"VendorFix");
 
   script_name("WordPress NextGEN Gallery Plugin Malicious File Upload Vulnerability");
 
@@ -50,17 +50,17 @@ if (description)
   script_dependencies("secpod_wordpress_detect_900182.nasl");
   script_mandatory_keys("wordpress/installed");
 
-  script_tag(name: "summary", value: "In post-new.php in the NextGEN Gallery plugin for WordPress, unrestricted file upload is available via the name parameter, if a file extension is changed from .jpg to .php.");
-  script_tag(name: "insight", value: "Even though credentials are required to upload file into the server, any
+  script_tag(name:"summary", value:"In post-new.php in the NextGEN Gallery plugin for WordPress, unrestricted file upload is available via the name parameter, if a file extension is changed from .jpg to .php.");
+  script_tag(name:"insight", value:"Even though credentials are required to upload file into the server, any
       new combined vulnerability can allow an attacker to Upload shell into the
       server which gives entire root access of the server.");
-  script_tag(name: "impact", value: "Successful exploitation of this vulnerability will give the attacker root access to the server.");
-  script_tag(name: "vuldetect", value: "Checks the version.");
-  script_tag(name: "affected", value: "WordPress NextGEN Gallery plugin before 2.1.15.");
-  script_tag(name: "solution", value: "Update to version 2.1.15 or later.");
+  script_tag(name:"impact", value:"Successful exploitation of this vulnerability will give the attacker root access to the server.");
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
+  script_tag(name:"affected", value:"WordPress NextGEN Gallery plugin before 2.1.15.");
+  script_tag(name:"solution", value:"Update to version 2.1.15 or later.");
 
-  script_xref(name: "URL", value: "https://wordpress.org/plugins/nextgen-gallery/#developers");
-  script_xref(name: "URL", value: "https://packetstormsecurity.com/files/135061/WordPress-NextGEN-Gallery-2.1.10-Shell-Upload.html");
+  script_xref(name:"URL", value:"https://wordpress.org/plugins/nextgen-gallery/#developers");
+  script_xref(name:"URL", value:"https://packetstormsecurity.com/files/135061/WordPress-NextGEN-Gallery-2.1.10-Shell-Upload.html");
 
   exit(0);
 }
