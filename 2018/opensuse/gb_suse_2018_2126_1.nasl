@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2126_1.nasl 10696 2018-08-01 02:23:21Z ckuersteiner $
+# $Id: gb_suse_2018_2126_1.nasl 12280 2018-11-09 10:01:52Z cfischer $
 #
 # SuSE Update for python openSUSE-SU-2018:2126-1 (python)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851827");
-  script_version("$Revision: 10696 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-01 04:23:21 +0200 (Wed, 01 Aug 2018) $");
+  script_version("$Revision: 12280 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 11:01:52 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-07-29 05:59:24 +0200 (Sun, 29 Jul 2018)");
   script_cve_id("CVE-2017-18207");
   script_tag(name:"cvss_base", value:"4.3");
@@ -37,8 +37,7 @@ if(description)
   script_name("SuSE Update for python openSUSE-SU-2018:2126-1 (python)");
   script_tag(name:"summary", value:"Check the version of python");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for python fixes the following issues:
+  script_tag(name:"insight", value:"This update for python fixes the following issues:
 
   The following security vulnerabilities were addressed:
 
@@ -51,7 +50,7 @@ if(description)
 
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -69,19 +68,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

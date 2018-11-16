@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2813_1.nasl 11690 2018-09-28 13:52:27Z cfischer $
+# $Id: gb_suse_2018_2813_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for openslp openSUSE-SU-2018:2813-1 (openslp)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851905");
-  script_version("$Revision: 11690 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-28 15:52:27 +0200 (Fri, 28 Sep 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-09-25 08:21:50 +0200 (Tue, 25 Sep 2018)");
   script_cve_id("CVE-2017-17833");
   script_tag(name:"cvss_base", value:"7.5");
@@ -37,12 +37,12 @@ if(description)
   script_name("SuSE Update for openslp openSUSE-SU-2018:2813-1 (openslp)");
   script_tag(name:"summary", value:"Check the version of openslp");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for openslp fixes the following issues:
+  script_tag(name:"insight", value:"This update for openslp fixes the following issues:
 
   - CVE-2017-17833: Prevent heap-related memory corruption issue which may
   have manifested itself as a denial-of-service or a remote code-execution
   vulnerability (bsc#1090638)
+
   - Prevent out of bounds reads in message parsing
 
   This update was imported from the SUSE:SLE-12:Update update project.
@@ -69,19 +69,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

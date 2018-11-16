@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2742_1.nasl 12164 2018-10-30 09:02:07Z asteins $
+# $Id: gb_suse_2018_2742_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for GraphicsMagick openSUSE-SU-2018:2742-1 (GraphicsMagick)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851896");
-  script_version("$Revision: 12164 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-30 10:02:07 +0100 (Tue, 30 Oct 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-09-18 08:12:45 +0200 (Tue, 18 Sep 2018)");
   script_cve_id("CVE-2018-16644", "CVE-2018-16645");
   script_tag(name:"cvss_base", value:"4.3");
@@ -37,12 +37,12 @@ if(description)
   script_name("SuSE Update for GraphicsMagick openSUSE-SU-2018:2742-1 (GraphicsMagick)");
   script_tag(name:"summary", value:"Check the version of GraphicsMagick");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for GraphicsMagick fixes the following issues:
+  script_tag(name:"insight", value:"This update for GraphicsMagick fixes the following issues:
 
   - CVE-2018-16644: Added missing check for length in the functions
   ReadDCMImage and ReadPICTImage, which allowed remote attackers to cause
   a denial of service via a crafted image (bsc#1107609)
+
   - CVE-2018-16645: Prevent excessive memory allocation issue in the
   functions ReadBMPImage and ReadDIBImage, which allowed remote attackers
   to cause a denial
@@ -74,19 +74,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

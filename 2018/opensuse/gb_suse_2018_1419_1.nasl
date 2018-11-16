@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1419_1.nasl 10046 2018-06-01 02:46:35Z ckuersteiner $
+# $Id: gb_suse_2018_1419_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for bash openSUSE-SU-2018:1419-1 (bash)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851763");
-  script_version("$Revision: 10046 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-06-01 04:46:35 +0200 (Fri, 01 Jun 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-05-26 05:44:47 +0200 (Sat, 26 May 2018)");
   script_cve_id("CVE-2016-0634", "CVE-2016-7543");
   script_tag(name:"cvss_base", value:"7.2");
@@ -38,13 +38,13 @@ if(description)
   script_tag(name:"summary", value:"Check the version of bash");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present
 on the target host.");
-  script_tag(name:"insight", value:"
-  This update for bash fixes the following issues:
+  script_tag(name:"insight", value:"This update for bash fixes the following issues:
 
   Security issues fixed:
 
   - CVE-2016-7543: A code execution possibility via SHELLOPTS+PS4 variable
   was fixed (bsc#1001299)
+
   - CVE-2016-0634: Arbitrary code execution via malicious hostname was fixed
   (bsc#1000396)
 
@@ -79,19 +79,16 @@ on the target host.");
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2159_1.nasl 12164 2018-10-30 09:02:07Z asteins $
+# $Id: gb_suse_2018_2159_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for glibc openSUSE-SU-2018:2159-1 (glibc)
 #
@@ -29,18 +29,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.852053");
-  script_version("$Revision: 12164 $");
+  script_version("$Revision: 12283 $");
   script_cve_id("CVE-2017-18269", "CVE-2018-11236", "CVE-2018-11237");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-30 10:02:07 +0100 (Tue, 30 Oct 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:39:21 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for glibc openSUSE-SU-2018:2159-1 (glibc)");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:2159_1");
   script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-08/msg00000.html");
@@ -50,8 +50,7 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable package version is present on the target host.");
 
-  script_tag(name:"insight", value:"
-  This update for glibc fixes the following security issues:
+  script_tag(name:"insight", value:"This update for glibc fixes the following security issues:
 
   - CVE-2017-18269: An SSE2-optimized memmove implementation for i386 did
   not correctly perform the overlapping memory check if the source memory
@@ -59,9 +58,11 @@ if(description)
   being produced by the copy operation. This may have disclosed
   information to context-dependent attackers, resulted in a denial of
   service or code execution (bsc#1094150).
+
   - CVE-2018-11236: Prevent integer overflow on 32-bit architectures when
   processing very long pathname arguments to the realpath function,
   leading to a stack-based buffer overflow (bsc#1094161).
+
   - CVE-2018-11237: An AVX-512-optimized implementation of the mempcpy
   function may have written data beyond the target buffer, leading to a
   buffer overflow in __mempcpy_avx512_no_vzeroupper (bsc#1092877,

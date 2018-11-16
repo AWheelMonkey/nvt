@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2658_1.nasl 11350 2018-09-12 08:17:35Z santu $
+# $Id: gb_suse_2018_2658_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for MozillaThunderbird openSUSE-SU-2018:2658-1 (MozillaThunderbird)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851886");
-  script_version("$Revision: 11350 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-12 10:17:35 +0200 (Wed, 12 Sep 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-09-09 07:10:07 +0200 (Sun, 09 Sep 2018)");
   script_cve_id("CVE-2018-12359", "CVE-2018-12360", "CVE-2018-12361", "CVE-2018-12362",
                 "CVE-2018-12363", "CVE-2018-12364", "CVE-2018-12365", "CVE-2018-12366",
@@ -41,32 +41,43 @@ if(description)
   script_tag(name:"summary", value:"Check the version of MozillaThunderbird");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present
   on the target host.");
-  script_tag(name:"insight", value:"
-  This update for MozillaThunderbird to version 60.0 fixes the following
+  script_tag(name:"insight", value:"This update for MozillaThunderbird to version 60.0 fixes the following
   issues:
 
   These security issues were fixed:
 
   - CVE-2018-12359: Prevent buffer overflow using computed size of canvas
   element (bsc#1098998).
+
   - CVE-2018-12360: Prevent use-after-free when using focus() (bsc#1098998).
+
   - CVE-2018-12361: Prevent integer overflow in SwizzleData (bsc#1098998).
+
   - CVE-2018-12362: Prevent integer overflow in SSSE3 scaler (bsc#1098998).
+
   - CVE-2018-5156: Prevent media recorder segmentation fault when track type
   is changed during capture (bsc#1098998).
+
   - CVE-2018-12363: Prevent use-after-free when appending DOM nodes
   (bsc#1098998).
+
   - CVE-2018-12364: Prevent CSRF attacks through 307 redirects and NPAPI
   plugins (bsc#1098998).
+
   - CVE-2018-12365: Prevent compromised IPC child process listing local
   filenames (bsc#1098998).
+
   - CVE-2018-12371: Prevent integer overflow in Skia library during edge
   builder allocation (bsc#1098998).
+
   - CVE-2018-12366: Prevent invalid data handling during QCMS
   transformations (bsc#1098998).
+
   - CVE-2018-12367: Timing attack mitigation of PerformanceNavigationTiming
   (bsc#1098998).
+
   - CVE-2018-5187: Various memory safety bugs (bsc#1098998).
+
   - CVE-2018-5188: Various memory safety bugs (bsc#1098998).
 
   These can not, in general, be exploited through email, but are potential
@@ -75,12 +86,19 @@ if(description)
   These non-security issues were fixed:
 
   - Storing of remote content settings fixed (bsc#1084603)
+
   - Improved message handling and composing
+
   - Improved handling of message templates
+
   - Support for OAuth2 and FIDO U2F
+
   - Various Calendar improvements
+
   - Various fixes and changes to e-mail workflow
+
   - Various IMAP fixes
+
   - Native desktop notifications
 
 
@@ -109,19 +127,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1802_1.nasl 11044 2018-08-18 15:12:40Z cfischer $
+# $Id: gb_suse_2018_1802_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for redis openSUSE-SU-2018:1802-1 (redis)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851796");
-  script_version("$Revision: 11044 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-18 17:12:40 +0200 (Sat, 18 Aug 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-06-23 05:57:35 +0200 (Sat, 23 Jun 2018)");
   script_cve_id("CVE-2018-11218", "CVE-2018-11219");
   script_tag(name:"cvss_base", value:"7.5");
@@ -36,28 +36,21 @@ if(description)
   script_tag(name:"qod_type", value:"package");
   script_name("SuSE Update for redis openSUSE-SU-2018:1802-1 (redis)");
   script_tag(name:"summary", value:"Check the version of redis");
-  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present 
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present
 on the target host.");
-  script_tag(name:"insight", value:"
-  This update for redis to 4.0.10 fixes the following issues:
+  script_tag(name:"insight", value:"This update for redis to 4.0.10 fixes the following issues:
 
   These security issues were fixed:
 
   - CVE-2018-11218: Prevent heap corruption vulnerability in cmsgpack
   (bsc#1097430).
+
   - CVE-2018-11219: Prevent integer overflow in Lua scripting (bsc#1097768).
 
-  For Leap 42.3 and openSUSE SLE 12 backports this is a jump from 4.0.6. For
-  additional details please see
-
-  - 'https://raw.githubusercontent.com/antirez/redis/4.0.9/00-RELEASENOTES'
-  - 'https://raw.githubusercontent.com/antirez/redis/4.0.8/00-RELEASENOTES'
-  - 'https://raw.githubusercontent.com/antirez/redis/4.0.7/00-RELEASENOTES'
-
-
+  For Leap 42.3 and openSUSE SLE 12 backports this is a jump from 4.0.6.
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -80,19 +73,16 @@ on the target host.");
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_3326_1.nasl 12105 2018-10-26 05:54:03Z cfischer $
+# $Id: gb_suse_2018_3326_1.nasl 12280 2018-11-09 10:01:52Z cfischer $
 #
 # SuSE Update for fuse openSUSE-SU-2018:3326-1 (fuse)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851945");
-  script_version("$Revision: 12105 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-26 07:54:03 +0200 (Fri, 26 Oct 2018) $");
+  script_version("$Revision: 12280 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 11:01:52 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-24 06:35:53 +0200 (Wed, 24 Oct 2018)");
   script_cve_id("CVE-2018-10906");
   script_tag(name:"cvss_base", value:"4.6");
@@ -37,8 +37,7 @@ if(description)
   script_name("SuSE Update for fuse openSUSE-SU-2018:3326-1 (fuse)");
   script_tag(name:"summary", value:"Check the version of fuse");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for fuse fixes the following security issue:
+  script_tag(name:"insight", value:"This update for fuse fixes the following security issue:
 
   - CVE-2018-10906: fusermount was vulnerable to a restriction bypass when
   SELinux is active. This allowed non-root users to mount a FUSE file
@@ -72,19 +71,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

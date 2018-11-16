@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1727_1.nasl 10262 2018-06-20 02:57:24Z ckuersteiner $
+# $Id: gb_suse_2018_1727_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for samba openSUSE-SU-2018:1727-1 (samba)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851790");
-  script_version("$Revision: 10262 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-06-20 04:57:24 +0200 (Wed, 20 Jun 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-06-17 05:53:15 +0200 (Sun, 17 Jun 2018)");
   script_cve_id("CVE-2018-1057");
   script_tag(name:"cvss_base", value:"6.5");
@@ -36,41 +36,40 @@ if(description)
   script_tag(name:"qod_type", value:"package");
   script_name("SuSE Update for samba openSUSE-SU-2018:1727-1 (samba)");
   script_tag(name:"summary", value:"Check the version of samba");
-  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present 
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present
 on the target host.");
-  script_tag(name:"insight", value:"
-  Samba was updated to 4.6.14, fixing bugs and security issues:
+  script_tag(name:"insight", value:"Samba was updated to 4.6.14, fixing bugs and security issues:
 
   Version update to 4.6.14 (bsc#1093664):
 
   + vfs_ceph: add fake async pwrite/pread send/recv hooks  (bso#13425).
   + Fix memory leak in vfs_ceph  (bso#13424).
-  + winbind: avoid using fstrcpy(dcname,...) in _dual_init_connection 
+  + winbind: avoid using fstrcpy(dcname, ...) in _dual_init_connection
   (bso#13294).
   + s3:smb2_server: correctly maintain request counters for compound
   requests  (bso#13215).
-  + s3: smbd: Unix extensions attempts to change wrong field in fchown call 
+  + s3: smbd: Unix extensions attempts to change wrong field in fchown call
   (bso#13375).
   + s3:smbd: map nterror on smb2_flush errorpath  (bso#13338).
-  + vfs_glusterfs: Fix the wrong pointer being sent in glfs_fsync_async 
+  + vfs_glusterfs: Fix the wrong pointer being sent in glfs_fsync_async
   (bso#13297).
   + s3: smbd: Fix possible directory fd leak if the underlying OS doesn't
   support fdopendir()  (bso#13270).
   + s3: ldap: Ensure the ADS_STRUCT pointer doesn't get freed on error, we
   don't own it here  (bso#13244).
   + s3:libsmb: allow -U'\\administrator' to work  (bso#13206).
-  + CVE-2018-1057: s4:dsdb: fix unprivileged password changes  (bso#13272) 
+  + CVE-2018-1057: s4:dsdb: fix unprivileged password changes  (bso#13272)
   (bsc#1081024).
   + s3:smbd: Do not crash if we fail to init the session table  (bso#13315).
   + libsmb: Use smb2 tcon if conn_protocol  = SMB2_02  (bso#13310).
   + smbXcli: Add 'force_channel_sequence'  (bso#13215).
-  + smbd: Fix channel sequence number checks for long-running requests 
+  + smbd: Fix channel sequence number checks for long-running requests
   (bso#13215).
   + s3:smb2_server: allow logoff, close, unlock, cancel and echo on expired
   sessions  (bso#13197).
   + s3:smbd: return the correct error for cancelled SMB2 notifies on expired
   sessions  (bso#13197).
-  + samba: Only use async signal-safe functions in signal handler 
+  + samba: Only use async signal-safe functions in signal handler
   (bso#13240).
   + subnet: Avoid a segfault when renaming subnet objects  (bso#13031).
 
@@ -83,7 +82,7 @@ on the target host.");
 
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -102,19 +101,16 @@ on the target host.");
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

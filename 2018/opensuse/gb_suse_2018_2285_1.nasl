@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2285_1.nasl 12164 2018-10-30 09:02:07Z asteins $
+# $Id: gb_suse_2018_2285_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for webkit2gtk3 openSUSE-SU-2018:2285-1 (webkit2gtk3)
 #
@@ -29,18 +29,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851975");
-  script_version("$Revision: 12164 $");
+  script_version("$Revision: 12283 $");
   script_cve_id("CVE-2018-11646", "CVE-2018-4190", "CVE-2018-4199", "CVE-2018-4218", "CVE-2018-4222", "CVE-2018-4232", "CVE-2018-4233");
   script_tag(name:"cvss_base", value:"6.8");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:P/I:P/A:P");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-30 10:02:07 +0100 (Tue, 30 Oct 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:24:51 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for webkit2gtk3 openSUSE-SU-2018:2285-1 (webkit2gtk3)");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:2285_1");
   script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-08/msg00031.html");
@@ -50,30 +50,35 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable package version is present on the target host.");
 
-  script_tag(name:"insight", value:"
-  This update for webkit2gtk3 to version 2.20.3 fixes the following issues:
+  script_tag(name:"insight", value:"This update for webkit2gtk3 to version 2.20.3 fixes the following issues:
 
   These security issues were fixed:
 
   - CVE-2018-4190: An unspecified issue allowed remote attackers to obtain
   sensitive credential information that is transmitted during a CSS
   mask-image fetch (bsc#1097693).
+
   - CVE-2018-4199: An unspecified issue allowed remote attackers to execute
   arbitrary code or cause a denial of service (buffer overflow and
   application crash) via a crafted web site (bsc#1097693)
+
   - CVE-2018-4218: An unspecified issue allowed remote attackers to execute
   arbitrary code or cause a denial of service (memory corruption and
   application crash) via a crafted web site that triggers an
   @generatorState use-after-free (bsc#1097693)
+
   - CVE-2018-4222: An unspecified issue allowed remote attackers to execute
   arbitrary code via a crafted web site that leverages a
   getWasmBufferFromValue
   out-of-bounds read during WebAssembly compilation (bsc#1097693)
+
   - CVE-2018-4232: An unspecified issue allowed remote attackers to
   overwrite cookies via a crafted web site (bsc#1097693)
+
   - CVE-2018-4233: An unspecified issue allowed remote attackers to execute
   arbitrary code or cause a denial of service (memory corruption and
   application crash) via a crafted web site (bsc#1097693)
+
   - CVE-2018-11646: webkitFaviconDatabaseSetIconForPageURL and
   webkitFaviconDatabaseSetIconURLForPageURL mishandle an unset pageURL,
   leading to an application crash (bsc#1095611).
@@ -81,10 +86,14 @@ if(description)
   These non-security issues were fixed:
 
   - Disable Gigacage if mmap fails to allocate in Linux.
+
   - Add user agent quirk for paypal website.
+
   - Fix a network process crash when trying to get cookies of about:blank
   page.
+
   - Fix UI process crash when closing the window under Wayland.
+
   - Fix several crashes and rendering issues.
 
   This update was imported from the SUSE:SLE-15:Update update project.

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1420_1.nasl 12164 2018-10-30 09:02:07Z asteins $
+# $Id: gb_suse_2018_1420_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for the openSUSE-SU-2018:1420-1 (the)
 #
@@ -29,18 +29,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851999");
-  script_version("$Revision: 12164 $");
+  script_version("$Revision: 12283 $");
   script_cve_id("CVE-2018-3639");
   script_tag(name:"cvss_base", value:"4.9");
   script_tag(name:"cvss_base_vector", value:"AV:L/AC:L/Au:N/C:C/I:N/A:N");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-30 10:02:07 +0100 (Tue, 30 Oct 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:33:17 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for the openSUSE-SU-2018:1420-1 (the)");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:1420_1");
   script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-05/msg00101.html");
@@ -50,10 +50,8 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable package version is present on the target host.");
 
-  script_tag(name:"insight", value:"
-
-  The openSUSE Leap 15.0 kernel was updated to receive various security and
-  bugfixes.
+  script_tag(name:"insight", value:"The openSUSE Leap 15.0 kernel was updated to
+  receive various security and bugfixes.
 
   The following security bugs were fixed:
 
@@ -68,11 +66,15 @@ if(description)
 
   - auto: Kernel detects whether your CPU model contains an implementation
   of Speculative Store Bypass and picks the most appropriate mitigation.
+
   - on: disable Speculative Store Bypass
+
   - off: enable Speculative Store Bypass
+
   - prctl: Control Speculative Store Bypass per thread via prctl.
   Speculative Store Bypass is enabled for a process by default. The
   state of the control is inherited on fork.
+
   - seccomp: Same as 'prctl' above, but all seccomp threads will disable
   SSB unless they explicitly opt out.
 
@@ -83,15 +85,21 @@ if(description)
   /sys/devices/system/cpu/vulnerabilities/spec_store_bypass file, containing:
 
   - 'Vulnerable'
+
   - 'Mitigation: Speculative Store Bypass disabled'
+
   - 'Mitigation: Speculative Store Bypass disabled via prctl'
+
   - 'Mitigation: Speculative Store Bypass disabled via prctl and seccomp'
 
   The following non-security bugs were fixed:
 
   - allow_unsupported: add module tainting on feature use (FATE#323394).
+
   - powerpc/64/kexec: fix race in kexec when XIVE is shutdown (bsc#1088273).
+
   - reiserfs: mark read-write mode unsupported (FATE#323394).
+
   - reiserfs: package in separate KMP (FATE#323394).
 
 

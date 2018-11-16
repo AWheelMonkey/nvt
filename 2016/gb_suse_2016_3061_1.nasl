@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2016_3061_1.nasl 8047 2017-12-08 08:56:07Z santu $
+# $Id: gb_suse_2016_3061_1.nasl 12284 2018-11-09 12:37:21Z cfischer $
 #
 # SuSE Update for Kernel openSUSE-SU-2016:3061-1 (Kernel)
 #
@@ -27,23 +27,20 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851448");
-  script_version("$Revision: 8047 $");
-  script_tag(name:"last_modification", value:"$Date: 2017-12-08 09:56:07 +0100 (Fri, 08 Dec 2017) $");
+  script_version("$Revision: 12284 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 13:37:21 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2016-12-09 05:38:41 +0100 (Fri, 09 Dec 2016)");
-  script_cve_id("CVE-2015-8962", "CVE-2015-8963", "CVE-2016-7042", "CVE-2016-7910", 
-                "CVE-2016-7911", "CVE-2016-7913", "CVE-2016-7914", "CVE-2016-7916", 
+  script_cve_id("CVE-2015-8962", "CVE-2015-8963", "CVE-2016-7042", "CVE-2016-7910",
+                "CVE-2016-7911", "CVE-2016-7913", "CVE-2016-7914", "CVE-2016-7916",
                 "CVE-2016-8633", "CVE-2016-8646", "CVE-2016-8655", "CVE-2016-9555");
   script_tag(name:"cvss_base", value:"10.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:C/I:C/A:C");
   script_tag(name:"qod_type", value:"package");
   script_name("SuSE Update for Kernel openSUSE-SU-2016:3061-1 (Kernel)");
-  script_tag(name: "summary", value: "Check the version of the Kernel");
-  script_tag(name: "vuldetect", value: "Get the installed version with the help 
-of detect NVT and check if the version is vulnerable or not.");
-  script_tag(name: "insight", value: "
-
-  The openSUSE 13.2 kernel was updated to receive various security and
-  bugfixes.
+  script_tag(name:"summary", value:"Check the version of the Kernel");
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
+  script_tag(name:"insight", value:"The openSUSE 13.2 kernel was updated to
+  receive various security and bugfixes.
 
   The following security bugs were fixed:
 
@@ -51,29 +48,35 @@ of detect NVT and check if the version is vulnerable or not.");
   in drivers/scsi/sg.c in the Linux kernel allowed local users to gain
   privileges or cause a denial of service (memory corruption and system
   crash) by detaching a device during an SG_IO ioctl call (bnc#1010501).
+
   - CVE-2015-8963: Race condition in kernel/events/core.c in the Linux
   kernel allowed local users to gain privileges or cause a denial of
   service (use-after-free) by leveraging incorrect handling of an swevent
   data structure during a CPU unplug operation (bnc#1010502).
+
   - CVE-2016-7042: The proc_keys_show function in security/keys/proc.c in
   the Linux kernel through 4.8.2, when the GNU Compiler Collection (gcc)
   stack protector is enabled, uses an incorrect buffer size for certain
   timeout data, which allowed local users to cause a denial of service
   (stack memory corruption and panic) by reading the /proc/keys file
   (bnc#1004517).
+
   - CVE-2016-7910: Use-after-free vulnerability in the disk_seqf_stop
   function in block/genhd.c in the Linux kernel allowed local users to
   gain privileges by leveraging the execution of a certain stop operation
   even if the corresponding start operation had failed (bnc#1010716).
+
   - CVE-2016-7911: Race condition in the get_task_ioprio function in
   block/ioprio.c in the Linux kernel allowed local users to gain
   privileges or cause a denial of service (use-after-free) via a crafted
   ioprio_get system call (bnc#1010711).
+
   - CVE-2016-7913: The xc2028_set_config function in
   drivers/media/tuners/tuner-xc2028.c in the Linux kernel allowed local
   users to gain privileges or cause a denial of service (use-after-free)
   via vectors involving omission of the firmware name from a certain data
   structure (bnc#1010478).
+
   - CVE-2016-7914: The assoc_array_insert_into_terminal_node function in
   lib/assoc_array.c in the Linux kernel did not check whether a slot is a
   leaf, which allowed local users to obtain sensitive information from
@@ -81,35 +84,33 @@ of detect NVT and check if the version is vulnerable or not.");
   and out-of-bounds read) via an application that uses associative-array
   data structures, as demonstrated by the keyutils test suite
   (bnc#1010475).
+
   - CVE-2016-7916: Race condition in the environ_read function in
   fs/proc/base.c in the Linux kernel allowed local users to obtain
   sensitive information from kernel memory by reading a /proc/*/environ
   file during a process-setup time interval in which environment-variable
-  copying is i ... 
+  copying is i ...
 
   Description truncated, for more information please check the Reference URL");
-  script_tag(name: "affected", value: "Kernel on openSUSE 13.2");
-  script_tag(name: "solution", value: "Please Install the Updated Packages.");
+  script_tag(name:"affected", value:"Kernel on openSUSE 13.2");
+  script_tag(name:"solution", value:"Please install the updated packages.");
 
-  script_xref(name: "openSUSE-SU", value: "2016:3061_1");
+  script_xref(name:"openSUSE-SU", value:"2016:3061_1");
   script_tag(name:"solution_type", value:"VendorFix");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2016 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSE13\.2");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSE13.2")
 {
@@ -1218,6 +1219,6 @@ if(release == "openSUSE13.2")
     exit(0);
   }
 
-  if (__pkg_match) exit(99); # Not vulnerable.
+  if (__pkg_match) exit(99);
   exit(0);
 }

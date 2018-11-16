@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2203_1.nasl 10868 2018-08-10 05:36:57Z ckuersteiner $
+# $Id: gb_suse_2018_2203_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for util-linux openSUSE-SU-2018:2203-1 (util-linux)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851836");
-  script_version("$Revision: 10868 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-10 07:36:57 +0200 (Fri, 10 Aug 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-08-07 05:49:51 +0200 (Tue, 07 Aug 2018)");
   script_cve_id("CVE-2018-7738");
   script_tag(name:"cvss_base", value:"7.2");
@@ -37,8 +37,7 @@ if(description)
   script_name("SuSE Update for util-linux openSUSE-SU-2018:2203-1 (util-linux)");
   script_tag(name:"summary", value:"Check the version of util-linux");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for util-linux fixes the following issues:
+  script_tag(name:"insight", value:"This update for util-linux fixes the following issues:
 
   This non-security issue was fixed:
 
@@ -49,8 +48,11 @@ if(description)
   These non-security issues were fixed:
 
   - Fixed crash loop in lscpu (bsc#1072947).
+
   - Fixed possible segfault of umount -a
+
   - Fixed mount -a on NFS bind mounts (bsc#1080740).
+
   - Fixed lsblk on NVMe (bsc#1078662).
 
   This update was imported from the SUSE:SLE-12-SP3:Update update project.
@@ -58,7 +60,7 @@ if(description)
 
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -77,19 +79,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

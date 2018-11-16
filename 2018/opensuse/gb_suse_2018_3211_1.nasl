@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_3211_1.nasl 12236 2018-11-07 05:34:17Z ckuersteiner $
+# $Id: gb_suse_2018_3211_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for samba openSUSE-SU-2018:3211-1 (samba)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851940");
-  script_version("$Revision: 12236 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-07 06:34:17 +0100 (Wed, 07 Nov 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-18 06:30:24 +0200 (Thu, 18 Oct 2018)");
   script_cve_id("CVE-2018-10919");
   script_tag(name:"cvss_base", value:"4.0");
@@ -37,9 +37,8 @@ if(description)
   script_name("SuSE Update for samba openSUSE-SU-2018:3211-1 (samba)");
   script_tag(name:"summary", value:"Check the version of samba");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-
-  Samba was updated to 4.6.15, bringing bug and security fixes. (bsc#1110943)
+  script_tag(name:"insight", value:"Samba was updated to 4.6.15, bringing
+  bug and security fixes. (bsc#1110943)
 
   Following security issues were fixed:
 
@@ -49,9 +48,12 @@ if(description)
   Non-security bugs fixed:
 
   - Fix ctdb_mutex_ceph_rados_helper deadlock (bsc#1102230).
+
   - Allow idmap_rid to have primary group other than 'Domain Users'
   (bsc#1087931).
+
   - winbind: avoid using fstrcpy in _dual_init_connection.
+
   - Fix ntlm authentications with 'winbind use default domain = yes'
   (bsc#1068059).
 
@@ -79,19 +81,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

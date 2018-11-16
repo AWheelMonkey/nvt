@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1722_1.nasl 12164 2018-10-30 09:02:07Z asteins $
+# $Id: gb_suse_2018_1722_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for python-python-gnupg openSUSE-SU-2018:1722-1 (python-python-gnupg)
 #
@@ -29,18 +29,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.852024");
-  script_version("$Revision: 12164 $");
+  script_version("$Revision: 12283 $");
   script_cve_id("CVE-2018-12020");
   script_tag(name:"cvss_base", value:"5.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:P/A:N");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-30 10:02:07 +0100 (Tue, 30 Oct 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:35:13 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for python-python-gnupg openSUSE-SU-2018:1722-1 (python-python-gnupg)");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:1722_1");
   script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-06/msg00033.html");
@@ -50,8 +50,7 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable package version is present on the target host.");
 
-  script_tag(name:"insight", value:"
-  This update for python-python-gnupg to version 0.4.3 fixes the following
+  script_tag(name:"insight", value:"This update for python-python-gnupg to version 0.4.3 fixes the following
   issues:
 
   The following security vulnerabilities were addressed:
@@ -63,11 +62,15 @@ if(description)
 
   - Add --no-verbose to the gpg command line, in case verbose is specified
   is gpg.conf.
+
   - Add expect_passphrase password for use on GnuPG  = 2.1 when passing
   passphrase to gpg via pinentry
+
   - Provide a trust_keys method to allow setting the trust level for keys
+
   - When the gpg executable is not found, note the path used in the
   exception message
+
   - Make error messages more informational
 
 

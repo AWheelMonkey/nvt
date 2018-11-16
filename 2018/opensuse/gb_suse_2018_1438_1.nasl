@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1438_1.nasl 10046 2018-06-01 02:46:35Z ckuersteiner $
+# $Id: gb_suse_2018_1438_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for opencv openSUSE-SU-2018:1438-1 (opencv)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851766");
-  script_version("$Revision: 10046 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-06-01 04:46:35 +0200 (Fri, 01 Jun 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-05-29 05:42:34 +0200 (Tue, 29 May 2018)");
   script_cve_id("CVE-2017-1000450", "CVE-2017-17760", "CVE-2017-18009", "CVE-2018-5268",
                 "CVE-2018-5269");
@@ -39,20 +39,23 @@ if(description)
   script_tag(name:"summary", value:"Check the version of opencv");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present
 on the target host.");
-  script_tag(name:"insight", value:"
-  This update for opencv fixes the following issues:
+  script_tag(name:"insight", value:"This update for opencv fixes the following issues:
 
   - CVE-2018-5268: Fixed a heap-based buffer overflow in
   incv::Jpeg2KDecoder::readComponent8u in
   modules/imgcodecs/src/grfmt_jpeg2000.cppwhen parsing a crafted image
   file. (boo#1075017)
+
   - CVE-2017-17760: Fixed an buffer overflow in function
   cv::PxMDecoder::readData (boo#1074313)
+
   - CVE-2017-18009: Fixed a heap-based buffer over-read in function
   cv::HdrDecoder::checkSignature (boo#1074312)
+
   - CVE-2017-1000450: Functions FillUniColor and FillUniGray do not check
   the input length which could lead to out of bounds writes and crashes
   (boo#1074487)
+
   - CVE-2018-5269: Fixed an assertion failure happens in
   cv::RBaseStream::setPos inmodules/imgcodecs/src/bitstrm.cpp because of
   an incorrect integer cast (bsc#1075019).
@@ -79,19 +82,16 @@ on the target host.");
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

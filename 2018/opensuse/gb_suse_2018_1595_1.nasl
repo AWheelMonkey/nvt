@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1595_1.nasl 12164 2018-10-30 09:02:07Z asteins $
+# $Id: gb_suse_2018_1595_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for mariadb openSUSE-SU-2018:1595-1 (mariadb)
 #
@@ -29,18 +29,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.852040");
-  script_version("$Revision: 12164 $");
+  script_version("$Revision: 12283 $");
   script_cve_id("CVE-2018-2755", "CVE-2018-2759", "CVE-2018-2761", "CVE-2018-2766", "CVE-2018-2767", "CVE-2018-2771", "CVE-2018-2777", "CVE-2018-2781", "CVE-2018-2782", "CVE-2018-2784", "CVE-2018-2786", "CVE-2018-2787", "CVE-2018-2810", "CVE-2018-2813", "CVE-2018-2817", "CVE-2018-2819");
   script_tag(name:"cvss_base", value:"6.8");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:S/C:N/I:N/A:C");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-30 10:02:07 +0100 (Tue, 30 Oct 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:36:20 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for mariadb openSUSE-SU-2018:1595-1 (mariadb)");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:1595_1");
   script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-06/msg00008.html");
@@ -50,13 +50,13 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable package version is present on the target host.");
 
-  script_tag(name:"insight", value:"
-  This update for mariadb to version 10.2.15 fixes the following issues:
+  script_tag(name:"insight", value:"This update for mariadb to version 10.2.15 fixes the following issues:
 
   These security issues were fixed:
 
   - CVE-2018-2767: Enforse use of SSL/TLS in embedded server library (Return
   of BACKRONYM) (bsc#1088681).
+
   - CVE-2018-2786: Vulnerability in the MySQL Server component of Oracle
   MySQL (subcomponent: InnoDB). Easily exploitable vulnerability allowed
   high privileged attacker with network access via multiple protocols to
@@ -65,30 +65,35 @@ if(description)
   crash (complete DOS) of MySQL Server as well as unauthorized update,
   insert or delete access to some of MySQL Server accessible data
   (bsc#1089987).
+
   - CVE-2018-2759: Vulnerability in the MySQL Server component of Oracle
   MySQL (subcomponent: InnoDB). Easily exploitable vulnerability allowed
   high privileged attacker with network access via multiple protocols to
   compromise MySQL Server. Successful attacks of this vulnerability can
   result in unauthorized ability to cause a hang or frequently repeatable
   crash (complete DOS) of MySQL Server (bsc#1089987).
+
   - CVE-2018-2777: Vulnerability in the MySQL Server component of Oracle
   MySQL (subcomponent: InnoDB). Easily exploitable vulnerability allowed
   high privileged attacker with network access via multiple protocols to
   compromise MySQL Server. Successful attacks of this vulnerability can
   result in unauthorized ability to cause a hang or frequently repeatable
   crash (complete DOS) of MySQL Server (bsc#1089987).
+
   - CVE-2018-2810: Vulnerability in the MySQL Server component of Oracle
   MySQL (subcomponent: InnoDB). Easily exploitable vulnerability allowed
   high privileged attacker with network access via multiple protocols to
   compromise MySQL Server. Successful attacks of this vulnerability can
   result in unauthorized ability to cause a hang or frequently repeatable
   crash (complete DOS) of MySQL Server (bsc#1089987).
+
   - CVE-2018-2782: Vulnerability in the MySQL Server component of Oracle
   MySQL (subcomponent: InnoDB). Easily exploitable vulnerability allowed
   low privileged attacker with network access via multiple protocols to
   compromise MySQL Server. Successful attacks of this vulnerability can
   result in unauthorized ability to cause a hang or frequently repeatable
   crash (complete DOS) of MySQL Server (bsc#1089987, bsc#1090518).
+
   - CVE-2018-2784: Vulnerability in the MySQL Server component of Oracle
   MySQL (subcomponent: InnoDB). Easily exploitable vulnerability allowed
   low privileged attacker with network access via multiple p ...

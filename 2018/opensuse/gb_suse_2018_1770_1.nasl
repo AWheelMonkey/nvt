@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1770_1.nasl 10299 2018-06-22 11:50:53Z santu $
+# $Id: gb_suse_2018_1770_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for cobbler openSUSE-SU-2018:1770-1 (cobbler)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851794");
-  script_version("$Revision: 10299 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-06-22 13:50:53 +0200 (Fri, 22 Jun 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-06-22 05:51:25 +0200 (Fri, 22 Jun 2018)");
   script_cve_id("CVE-2017-1000469");
   script_tag(name:"cvss_base", value:"10.0");
@@ -37,8 +37,7 @@ if(description)
   script_name("SuSE Update for cobbler openSUSE-SU-2018:1770-1 (cobbler)");
   script_tag(name:"summary", value:"Check the version of cobbler");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for cobbler fixes the following issues:
+  script_tag(name:"insight", value:"This update for cobbler fixes the following issues:
 
   The following security issue has been fixed:
 
@@ -48,9 +47,12 @@ if(description)
   Additionally, the following non-security issues have been fixed:
 
   - Fix signature for SLES15. (bsc#1075014)
+
   - Detect if there is already another instance of 'cobbler sync' running
   and exit with failure if so. (bsc#1081714)
+
   - Add SLES 15 distro profile. (bsc#1090205)
+
   - Require tftp(server) instead of atftp.
 
   This update was imported from the SUSE:SLE-12:Update update project.
@@ -58,7 +60,7 @@ if(description)
 
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -77,19 +79,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

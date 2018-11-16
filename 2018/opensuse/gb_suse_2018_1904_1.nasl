@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1904_1.nasl 10495 2018-07-13 06:13:03Z ckuersteiner $
+# $Id: gb_suse_2018_1904_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for ucode-intel openSUSE-SU-2018:1904-1 (ucode-intel)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851811");
-  script_version("$Revision: 10495 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-13 08:13:03 +0200 (Fri, 13 Jul 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-07-07 05:53:44 +0200 (Sat, 07 Jul 2018)");
   script_cve_id("CVE-2018-3639", "CVE-2018-3640");
   script_tag(name:"cvss_base", value:"4.9");
@@ -37,9 +37,7 @@ if(description)
   script_name("SuSE Update for ucode-intel openSUSE-SU-2018:1904-1 (ucode-intel)");
   script_tag(name:"summary", value:"Check the version of ucode-intel");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-
-  This update for ucode-intel fixes the following issues:
+  script_tag(name:"insight", value:"This update for ucode-intel fixes the following issues:
 
   The microcode bundles was updated to the 20180703 release
 
@@ -47,15 +45,11 @@ if(description)
   helps mitigating CVE-2018-3639 (Spectre v4)  (bsc#1100147 bsc#1087082
   bsc#1087083).
 
-  More information on:
-  'https://downloadcenter.intel.com/download/27945/Linux-Processor-Microcode-D'
-  ata-File
-
   Following chipsets are fixed in this round:
 
   Model        Stepping F-MO-S/PI      Old- New
 
-  ---- updated platforms ------------------------------------
+  - --- updated platforms ------------------------------------
 
   SNB-EP       C1       6-2d-6/6d 0000061c- 0000061d Xeon E5 SNB-EP
   C2       6-2d-7/6d 00000713- 00000714 Xeon E5 IVT          C0
@@ -71,7 +65,7 @@ if(description)
 
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -94,19 +88,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

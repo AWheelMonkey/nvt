@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1773_1.nasl 10868 2018-08-10 05:36:57Z ckuersteiner $
+# $Id: gb_suse_2018_1773_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for the openSUSE-SU-2018:1773-1 (the)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851795");
-  script_version("$Revision: 10868 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-10 07:36:57 +0200 (Fri, 10 Aug 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-06-22 05:51:28 +0200 (Fri, 22 Jun 2018)");
   script_cve_id("CVE-2017-13305", "CVE-2017-17741", "CVE-2017-18241", "CVE-2017-18249", "CVE-2018-1092", "CVE-2018-1093", "CVE-2018-1094", "CVE-2018-12233", "CVE-2018-3639", "CVE-2018-3665", "CVE-2018-5848");
   script_tag(name:"cvss_base", value:"7.1");
@@ -37,10 +37,8 @@ if(description)
   script_name("SuSE Update for the openSUSE-SU-2018:1773-1 (the)");
   script_tag(name:"summary", value:"Check the version of the");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-
-  The openSUSE Leap 42.3 was updated to 4.4.138 to receive various security
-  and bugfixes.
+  script_tag(name:"insight", value:"The openSUSE Leap 42.3 was updated to 4.4.138
+  to receive various security and bugfixes.
 
   The following security bugs were fixed:
 
@@ -51,37 +49,46 @@ if(description)
   analysis, aka Speculative Store Bypass (SSB), Variant 4 (bsc#1085308
   bsc#1087082) This update improves the previous Spectre Variant 4 fixes
   and also mitigates them on the ARM architecture.
+
   - CVE-2018-3665: The FPU state and registers of x86 CPUs were saved and
   restored in a lazy fashion, which opened its disclosure by speculative
   side channel attacks. This has been fixed by replacing the lazy
   save/restore by eager saving and restoring (bnc#1087086)
+
   - CVE-2018-5848: In the function wmi_set_ie(), the length validation code
   did not handle unsigned integer overflow properly. As a result, a large
   value of the 'ie_len' argument can cause a buffer overflow (bnc#1097356).
+
   - CVE-2017-18249: The add_free_nid function in fs/f2fs/node.c did not
   properly track an allocated nid, which allowed local users to cause a
   denial of service (race condition) or possibly have unspecified other
   impact via concurrent threads (bnc#1087036).
+
   - CVE-2017-18241: fs/f2fs/segment.c kernel allowed local users to cause a
   denial of service (NULL pointer dereference and panic) by using a
   noflush_merge option that triggers a NULL value for a flush_cmd_control
   data structure (bnc#1086400).
+
   - CVE-2017-17741: The KVM implementation allowed attackers to obtain
   potentially sensitive information from kernel memory, aka a write_mmio
   stack-based out-of-bounds read, related to arch/x86/kvm/x86.c and
   include/trace/events/kvm.h (bnc#1073311 1091815).
+
   - CVE-2017-13305: A information disclosure vulnerability in the
   encrypted-keys. (bnc#1094353).
+
   - CVE-2018-1093: The ext4_valid_block_bitmap function in fs/ext4/balloc.c
   allowed attackers to cause a denial of service (out-of-bounds read and
   system crash) via a crafted ext4 image because balloc.c and ialloc.c do
   not validate bitmap block numbers (bnc#1087095).
+
   - CVE-2018-1094: The ext4_fill_super function in fs/ext4/super.c did not
   always initialize the crc32c checksum driver, which allowed attackers to
   cause a denial of service (ext4_xattr_inode_hash NULL pointer
   dereference and system crash) via a crafted ext4 image (bnc#1087007
   1092903).
-  - CVE-2018-1092: The ext4_iget function in fs/ext4/inode.c mishand ... 
+
+  - CVE-2018-1092: The ext4_iget function in fs/ext4/inode.c mishand ...
 
   Description truncated, for more information please check the Reference URL");
   script_tag(name:"affected", value:"the on openSUSE Leap 42.3");
@@ -94,19 +101,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2958_1.nasl 12236 2018-11-07 05:34:17Z ckuersteiner $
+# $Id: gb_suse_2018_2958_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for gnutls openSUSE-SU-2018:2958-1 (gnutls)
 #
@@ -29,18 +29,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.852002");
-  script_version("$Revision: 12236 $");
+  script_version("$Revision: 12283 $");
   script_cve_id("CVE-2017-10790", "CVE-2018-10844", "CVE-2018-10845", "CVE-2018-10846");
   script_tag(name:"cvss_base", value:"5.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:P");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-07 06:34:17 +0100 (Wed, 07 Nov 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:33:23 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for gnutls openSUSE-SU-2018:2958-1 (gnutls)");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:2958_1");
   script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-10/msg00000.html");
@@ -50,17 +50,20 @@ if(description)
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable package version is present on the target host.");
 
-  script_tag(name:"insight", value:"
-  This update for gnutls fixes the following security issues:
+  script_tag(name:"insight", value:"This update for gnutls fixes the following security issues:
 
   - Improved mitigations against Lucky 13 class of attacks
-  - CVE-2018-10846: 'Just in Time' PRIME + PROBE cache-based side channel
+
+  - CVE-2018-10846:'Just in Time' PRIME + PROBE cache-based side channel
   attack can lead to plaintext recovery (bsc#1105460)
+
   - CVE-2018-10845: HMAC-SHA-384 vulnerable to Lucky thirteen attack due to
   use
   of wrong constant (bsc#1105459)
+
   - CVE-2018-10844: HMAC-SHA-256 vulnerable to Lucky thirteen attack due to
   not enough dummy function calls (bsc#1105437)
+
   - CVE-2017-10790: The _asn1_check_identifier function in Libtasn1 caused a
   NULL pointer dereference and crash (bsc#1047002)
 

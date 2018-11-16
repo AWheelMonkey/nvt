@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_1361_1.nasl 11044 2018-08-18 15:12:40Z cfischer $
+# $Id: gb_suse_2018_1361_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for Mozilla openSUSE-SU-2018:1361-1 (Mozilla)
 #
@@ -27,48 +27,58 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851753");
-  script_version("$Revision: 11044 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-18 17:12:40 +0200 (Sat, 18 Aug 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-05-21 05:00:55 +0200 (Mon, 21 May 2018)");
-  script_cve_id("CVE-2018-5150", "CVE-2018-5154", "CVE-2018-5155", "CVE-2018-5159", 
-                "CVE-2018-5161", "CVE-2018-5162", "CVE-2018-5168", "CVE-2018-5170", 
-                "CVE-2018-5174", "CVE-2018-5178", "CVE-2018-5183", "CVE-2018-5184", 
+  script_cve_id("CVE-2018-5150", "CVE-2018-5154", "CVE-2018-5155", "CVE-2018-5159",
+                "CVE-2018-5161", "CVE-2018-5162", "CVE-2018-5168", "CVE-2018-5170",
+                "CVE-2018-5174", "CVE-2018-5178", "CVE-2018-5183", "CVE-2018-5184",
                 "CVE-2018-5185");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
   script_tag(name:"qod_type", value:"package");
   script_name("SuSE Update for Mozilla openSUSE-SU-2018:1361-1 (Mozilla)");
   script_tag(name:"summary", value:"Check the version of Mozilla");
-  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present 
+  script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present
 on the target host.");
-  script_tag(name:"insight", value:"
-  This update for Mozilla Thunderbird to version 52.8 fixes the following
+  script_tag(name:"insight", value:"This update for Mozilla Thunderbird to version 52.8 fixes the following
   issues:
 
   Security issues fixed (MFSA 2018-13, boo#1092548):
 
   - CVE-2018-5183: Backport critical security fixes in Skia
+
   - CVE-2018-5154: Use-after-free with SVG animations and clip paths
+
   - CVE-2018-5155: Use-after-free with SVG animations and text paths
+
   - CVE-2018-5159: Integer overflow and out-of-bounds write in Skia
+
   - CVE-2018-5168: Lightweight themes can be installed without user
   interaction
+
   - CVE-2018-5178: Buffer overflow during UTF-8 to Unicode string conversion
   through legacy extension
+
   - CVE-2018-5150: Memory safety bugs fixed in Firefox 60, Firefox ESR 52.8,
   and Thunderbird 52.8
+
   - CVE-2018-5161: Hang via malformed headers (bsc#1093970)
+
   - CVE-2018-5162: Encrypted mail leaks plaintext through src attribute
   (bsc#1093971)
+
   - CVE-2018-5170: Filename spoofing for external attachments (bsc#1093972)
+
   - CVE-2018-5184: Full plaintext recovery in S/MIME via chosen-ciphertext
   attack (bsc#1093969)
+
   - CVE-2018-5185: Leaking plaintext through HTML forms (bsc#1093973)
 
 
   Patch Instructions:
 
-  To install this openSUSE Security Update use the SUSE recommended 
+  To install this openSUSE Security Update use the SUSE recommended
   installation methods
   like YaST online_update or 'zypper patch'.
 
@@ -91,19 +101,16 @@ on the target host.");
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {

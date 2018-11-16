@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_2817_1.nasl 11667 2018-09-28 07:49:01Z santu $
+# $Id: gb_suse_2018_2817_1.nasl 12283 2018-11-09 11:21:17Z cfischer $
 #
 # SuSE Update for MozillaFirefox openSUSE-SU-2018:2817-1 (MozillaFirefox)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.851902");
-  script_version("$Revision: 11667 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-28 09:49:01 +0200 (Fri, 28 Sep 2018) $");
+  script_version("$Revision: 12283 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-09 12:21:17 +0100 (Fri, 09 Nov 2018) $");
   script_tag(name:"creation_date", value:"2018-09-25 08:19:27 +0200 (Tue, 25 Sep 2018)");
   script_cve_id("CVE-2018-12383", "CVE-2018-12385");
   script_tag(name:"cvss_base", value:"5.0");
@@ -37,14 +37,14 @@ if(description)
   script_name("SuSE Update for MozillaFirefox openSUSE-SU-2018:2817-1 (MozillaFirefox)");
   script_tag(name:"summary", value:"Check the version of MozillaFirefox");
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
-  script_tag(name:"insight", value:"
-  This update for Mozilla Firefox to version 60.2.1esr fixes the following
+  script_tag(name:"insight", value:"This update for Mozilla Firefox to version 60.2.1esr fixes the following
   issues:
 
   Security issues fixed (MFSA 2018-23):
 
   - CVE-2018-12385: Crash in TransportSecurityInfo due to cached data
   (boo#1109363)
+
   - CVE-2018-12383: Setting a master password did not delete unencrypted
   previously stored passwords (boo#1107343)
 
@@ -78,19 +78,16 @@ if(description)
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("SuSE Local Security Checks");
   script_dependencies("gather-package-list.nasl");
-  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms");
+  script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
   exit(0);
 }
 
 include("revisions-lib.inc");
 include("pkg-lib-rpm.inc");
 
-release = get_kb_item("ssh/login/release");
-
+release = rpm_get_ssh_release();
+if(!release) exit(0);
 res = "";
-if(release == NULL){
-  exit(0);
-}
 
 if(release == "openSUSELeap42.3")
 {
