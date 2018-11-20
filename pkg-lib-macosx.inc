@@ -30,8 +30,6 @@
 # in the list is greater that the given one.
 #
 
-include("version_func.inc");
-
 function isosxpkgvuln(fixed, diff) {
     list=get_kb_item("ssh/login/osx_pkgs");
     if (!list) exit (0);
