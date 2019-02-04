@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_sun_java_sys_web_serv_bof_vuln_win.nasl 11118 2018-08-26 14:03:36Z cfischer $
+# $Id: gb_sun_java_sys_web_serv_bof_vuln_win.nasl 12978 2019-01-08 14:15:07Z cfischer $
 #
 # Sun Java System Web Server Buffer Overflow Vulnerability (Windows)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.801146");
-  script_version("$Revision: 11118 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-26 16:03:36 +0200 (Sun, 26 Aug 2018) $");
+  script_version("$Revision: 12978 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-08 15:15:07 +0100 (Tue, 08 Jan 2019) $");
   script_tag(name:"creation_date", value:"2009-11-12 15:21:24 +0100 (Thu, 12 Nov 2009)");
   script_tag(name:"cvss_base", value:"9.3");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:C/I:C/A:C");
@@ -48,16 +48,13 @@ if(description)
   script_xref(name:"URL", value:"http://www.vupen.com/english/advisories/2009/3024");
 
   script_tag(name:"impact", value:"Successful exploitation will allow attackers to execute arbitrary
-  code in the context of an affected system.
-
-  Impact Level: System/Application");
+  code in the context of an affected system.");
 
   script_tag(name:"affected", value:"Sun Java System Web Server version 7.0 update 6 and prior on Windows.");
 
   script_tag(name:"insight", value:"An unspecified error and can be exploited to cause a buffer overflow.");
 
-  script_tag(name:"solution", value:"Upgrade to version 7.0 update 7 or later,
-  For updates refer to http://www.sun.com/");
+  script_tag(name:"solution", value:"Upgrade to version 7.0 update 7 or later.");
 
   script_tag(name:"summary", value:"This host has Sun Java Web Server running which is prone to Buffer
   Overflow vulnerability.");
@@ -65,6 +62,7 @@ if(description)
   script_tag(name:"qod_type", value:"registry");
   script_tag(name:"solution_type", value:"VendorFix");
 
+  script_xref(name:"URL", value:"http://www.sun.com/");
   exit(0);
 }
 
@@ -79,10 +77,7 @@ if( ! jswsPath ) exit( 0 );
 
 jswsPath = ereg_replace( pattern:'\"(.*)\"', replace:"\1", string:jswsPath );
 jswsPath = jswsPath - "\bin\uninstall.exe" + "\README.TXT";
-
-share = ereg_replace( pattern:"([A-Z]):.*", replace:"\1$", string:jswsPath );
-file = ereg_replace( pattern:"[A-Z]:(.*)", replace:"\1",string:jswsPath );
-jswsVer = read_file( share:share, file:file, offset:0, count:150 );
+jswsVer = smb_read_file(fullpath:jswsPath, offset:0, count:150 );
 if( ! jswsVer ) exit( 0 );
 
 jswsVer = eregmatch( pattern:"Web Server ([0-9.]+)([ a-zA-z]+)?([0-9]+)?", string:jswsVer );

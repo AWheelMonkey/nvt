@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: os_detection.nasl 12413 2018-11-19 11:11:31Z cfischer $
+# $Id: os_detection.nasl 12766 2018-12-12 08:34:25Z ckuersteiner $
 #
 # OS Detection Consolidation and Reporting
 #
@@ -28,8 +28,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.105937");
-  script_version("$Revision: 12413 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-19 12:11:31 +0100 (Mon, 19 Nov 2018) $");
+  script_version("$Revision: 12766 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-12 09:34:25 +0100 (Wed, 12 Dec 2018) $");
   script_tag(name:"creation_date", value:"2016-02-19 11:19:54 +0100 (Fri, 19 Feb 2016)");
   script_tag(name:"cvss_base", value:"0.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
@@ -66,8 +66,12 @@ if(description)
                       "gb_watchguard_fireware_detect.nasl", "gb_vibnode_consolidation.nasl",
                       "gb_hyperip_consolidation.nasl", "gb_avm_fritz_box_detect.nasl",
                       "gb_dlink_dap_detect.nasl", "gb_dlink_dsl_detect.nasl",
-                      "gb_dlink_dns_detect.nasl",
-                      "gb_windows_cpe_detect.nasl",
+                      "gb_dlink_dns_detect.nasl", "gb_dlink_dir_detect.nasl",
+                      "gb_dlink_dwr_detect.nasl", "gb_wd_mycloud_consolidation.nasl",
+                      "gb_intelbras_ncloud_devices_http_detect.nasl",
+                      "gb_ricoh_iwb_detect.nasl", "gb_codesys_os_detection.nasl",
+                      "gb_simatic_hmi_consolidation.nasl", "gb_wago_plc_consolidation.nasl",
+                      "gb_rockwell_micrologix_consolidation.nasl", "gb_windows_cpe_detect.nasl",
                       "gather-package-list.nasl", "gb_cisco_pis_version.nasl",
                       "gb_checkpoint_fw_version.nasl", "gb_smb_windows_detect.nasl",
                       "gb_nec_communication_platforms_detect.nasl", "gb_ssh_os_detection.nasl",
@@ -96,7 +100,7 @@ if(description)
   Furthermore it reports all previously collected information leading to this best matching OS. It also reports possible additional information
   which might help to improve the OS detection.
 
-  If any of this information is wrong or could be improved please consider to report these to the references community portal.");
+  If any of this information is wrong or could be improved please consider to report these to the referenced community portal.");
 
   script_tag(name:"qod_type", value:"remote_banner");
 

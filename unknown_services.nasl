@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: unknown_services.nasl 10950 2018-08-14 10:01:57Z ckuersteiner $
+# $Id: unknown_services.nasl 13369 2019-01-30 15:47:45Z cfischer $
 #
 # Collect banner of unknown services
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.11154");
-  script_version("$Revision: 10950 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-14 12:01:57 +0200 (Tue, 14 Aug 2018) $");
+  script_version("$Revision: 13369 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-30 16:47:45 +0100 (Wed, 30 Jan 2019) $");
   script_tag(name:"creation_date", value:"2005-11-03 14:08:04 +0100 (Thu, 03 Nov 2005)");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
   script_tag(name:"cvss_base", value:"0.0");
@@ -56,9 +56,10 @@ if(description)
                       "gb_dnp3_detect.nasl", "gb_dont_scan_fragile_device.nasl",
                       "gb_emc_networker_detect.nasl", "gb_ethernetip_detect.nasl",
                       "gb_fins_tcp_detect.nasl", "gb_hid_vertx_discoveryd_detect.nasl",
-                      "gb_ibm_soliddb_detect.nasl",
+                      "gb_ibm_soliddb_detect.nasl", "gb_ibm_websphere_mq_mqi_detect.nasl",
                       "gb_informix_detect.nasl", "gb_kerberos_detect.nasl",
-                      "gb_lantronix_mgm_tcp_detect.nasl", "gb_memcachedb_detect.nasl",
+                      "gb_lantronix_mgm_tcp_detect.nasl", "gb_logitech_media_server_tcp_detect.nasl",
+                      "gb_memcachedb_detect.nasl",
                       "gb_memcached_detect.nasl", "gb_modbus_detect.nasl",
                       "gb_mongodb_detect.nasl", "gb_mqtt_detect.nasl",
                       "gb_netware_core_protocol_detect.nasl", "gb_niagara_fox_detect.nasl",
@@ -92,6 +93,7 @@ if(description)
                       "ssh_detect.nasl", "sw_jenkins_detect.nasl",
                       "sw_netstat_service_detect.nasl", "sw_obby_detect.nasl",
                       "sw_policyd-weight_detect.nasl", "sw_sphinxsearch_detect.nasl",
+                      "telnet.nasl",
                       "vmware_server_detect.nasl", "vnc.nasl",
                       "vnc_security_types.nasl", "xmpp_detect.nasl",
                       "X.nasl", "xtel_detect.nasl",
@@ -99,8 +101,7 @@ if(description)
                       "zabbix_detect.nasl");
   script_require_ports("Services/unknown");
 
-  script_tag(name:"summary", value:"This plugin collect the banner from unknown/unidentified services
-  so that the OpenVAS team can take them into account.
+  script_tag(name:"summary", value:"This plugin collect the banner from unknown/unidentified services.
 
   The actual reporting takes place in the separate NVT 'Unknown OS and Service Banner Reporting'
   OID: 1.3.6.1.4.1.25623.1.0.108441.");

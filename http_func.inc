@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Include File
-# $Id: http_func.inc 11948 2018-10-18 06:33:54Z cfischer $
+# $Id: http_func.inc 13341 2019-01-29 09:54:53Z cfischer $
 #
 # Methods to handle HTTP
 #
@@ -24,27 +24,43 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# $Revision: 11948 $
+# $Revision: 13341 $
 #
 ###############################################################################
+
+# Enables to include the OID of the VT within the HTTP user agent of get_http_user_agent()
+# for debugging purposes on the target / targets logfiles.
+global_var _http_ua_include_oid;
+_http_ua_include_oid = FALSE;
 
 # @brief Returns a HTTP User Agent string which can be used by VTs within the
 #        User-Agent: header of HTTP requests.
 #
+# @param vt_string This is a string which is initially used to build the default UA
+#        string for the case where the "http/user-agent" KB key is empty initially.
+# @param dont_add_oid If set to TRUE don't add the OID of the calling VT to the
+#        User-Agent string even if the _http_ua_include_oid global variable is set.
+#
 # @return A string containing a HTTP user agent.
 #
-function get_http_user_agent() {
+function get_http_user_agent( vt_string, dont_add_oid ) {
 
-  local_var default, ua;
+  local_var vt_string, dont_add_oid;
+  local_var ua_vt_string, default, ua;
   # nb: __http_func_user_agent is global var
+
+  if( vt_string )
+    ua_vt_string = vt_string;
+  else
+    ua_vt_string = "OpenVAS-VT";
 
   # nb: Only used if the function is called by a VT running via openvas-nasl
   # and if global_settings.nasl wasn't called before that VT.
   # TBD: On master we don't have a "OPENVAS_VERSION" defined...
   if( OPENVAS_VERSION )
-    default = "Mozilla/5.0 [en] (X11, U; OpenVAS-VT " + OPENVAS_VERSION + ")";
+    default = "Mozilla/5.0 [en] (X11, U; " + ua_vt_string + " " + OPENVAS_VERSION + ")";
   else
-    default = "Mozilla/5.0 [en] (X11, U; OpenVAS-VT)";
+    default = "Mozilla/5.0 [en] (X11, U; " + ua_vt_string + ")";
 
   if( ! isnull( __http_func_user_agent ) ) {
     ua = string( __http_func_user_agent );
@@ -58,32 +74,37 @@ function get_http_user_agent() {
     }
   }
 
+  # nb: See description of the variable for the purpose
+  if( _http_ua_include_oid && ! dont_add_oid )
+    ua = ereg_replace( string:ua, pattern:"(.+)$", replace:"\1 (OID:" + get_script_oid() + ")" );
+
   return ua;
 }
 
 global_var OPENVAS_HTTP_USER_AGENT;
 OPENVAS_HTTP_USER_AGENT = get_http_user_agent();
 
-# Global key to avoid that we're repeatedly asking redis for something we already know
-global_var __http_func_user_agent;
+# Global vars to avoid that we're repeatedly asking redis for something we already know.
+global_var __http_func_user_agent, __http_is_cgi_scan_disabled;
 
-# Enables debugging output for a few functions below
+# Enables debugging output for a few functions below.
 global_var _http_debug;
 _http_debug = FALSE;
 
-# global vars passed to e.g. http_keepalive.inc
-global_var http_cgi_disabled, optimize_test_enabled;
-http_cgi_disabled     = get_kb_item( "Settings/disable_cgi_scanning" );
+# Global var passed to e.g. http_keepalive.inc
+global_var optimize_test_enabled;
 optimize_test_enabled = get_preference( "optimize_test" );
 
-# Global keys to avoid that we're repeatedly asking redis for something we already know
+# Global vars to avoid that we're repeatedly asking redis for something we already know.
 global_var _http_is_broken_array, _http_no404_string_array, _http_has_generic_xss_array;
+
 # nb: key is the host+port or NULL (if not previously checked), value TRUE/FALSE if broken or not
 _http_is_broken_array = make_array();
+
 # nb: key is the host+port or NULL (if not previously checked), value a string or FALSE
 _http_no404_string_array = make_array();
-# nb: key is the host+port or NULL (if not previously checked), value TRUE/FALSE if it has a
-# generic XSS or not
+
+# nb: key is the host+port or NULL (if not previously checked), value TRUE/FALSE if it has a generic XSS or not
 _http_has_generic_xss_array = make_array();
 
 # @brief Split the passed HTTP header into an array containing the header names as an array
@@ -264,13 +285,16 @@ function get_http_banner( port, file, ignore_broken ) {
 function get_http_port( default, nodefault, host, ignore_broken, ignore_cgi_disabled, dont_use_vhosts ) {
 
   local_var default, nodefault, host, ignore_broken, ignore_cgi_disabled, dont_use_vhosts;
-  local_var port, p;
-  # nb: http_cgi_disabled and optimize_test_enabled are global vars
+  local_var http_cgi_disabled, port;
+  # nb: optimize_test_enabled is a global var
 
   if( ! default && ! nodefault ) {
     set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#default#-#get_http_port" );
     exit( 0 );
   }
+
+  # nb: Keep before the forking get_kb_item call from below
+  http_cgi_disabled = http_is_cgi_scan_disabled();
 
   port = get_kb_item( "Services/www" ); # nb: This will fork on multiple open ports
   if( port )
@@ -303,14 +327,12 @@ function get_http_port( default, nodefault, host, ignore_broken, ignore_cgi_disa
     if( ! host )
       host = "*";
 
-    p = get_http_is_marked_broken( port:default, host:host );
-    if( p )
+    if( get_http_is_marked_broken( port:default, host:host ) )
       exit( 0 );
   }
 
   # TBD: It seems this is never set...
-  p = get_kb_item( "Services/www/" + default + "/working" );
-  if( p )
+  if( get_kb_item( "Services/www/" + default + "/working" ) )
     return default;
 
   if( ! get_port_state( default ) )
@@ -705,7 +727,7 @@ function http_recv_length( socket, bodylength ) {
 #        the response.
 #
 # @param port The port of the remote server to send the data to.
-# @param data The data to sent to the remove server.
+# @param data The data to sent to the remote server.
 #
 # @return A string containing the received HTTP data or NULL if none was
 #         received or no port or data parameter was passed.
@@ -716,7 +738,8 @@ function http_recv_length( socket, bodylength ) {
 function http_send_recv( port, data ) {
 
   local_var port, data;
-  local_var s, x, cl, conlen, r;
+  local_var s, x, cl, conlen, r, user_agent, oid_str;
+  # nb: _http_ua_include_oid and _http_debug are global vars
 
   if( ! port ) {
     set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#port#-#http_send_recv" );
@@ -728,18 +751,33 @@ function http_send_recv( port, data ) {
     return NULL;
   }
 
-  # nb: We should expect at least a request like: "GET / HTTP/1.1\r\n" (length: 16).
+  # nb: We should expect at least a request like: "GET / HTTP/1.1\r\n\r\n" (length: 18).
   # But for some specific cases we're just checking for some less data.
   if( strlen( data ) < 8 || data !~ "^(DELETE|PROPFIND|PUT|GET|HEAD|POST|OPTIONS|REPORT|MKCOL|MOVE|PROPPATCH|COPY|PATCH|CONNECT|TRACE|LOCK|UNLOCK|TRACK|M-POST|CHECKOUT|CHECKIN|UNCHECKOUT|VERSION-CONTROL|BASELINE-CONTROL).*HTTP/(1\.[01]|2)" )
     set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#http_send_recv(): Invalid HTTP request (length < 8, invalid HTTP method or missing HTTP/ header) passed in 'data' variable." );
 
   # http_get() won't add a Host: header if only HTTP/1.0 support was detected
   # nb: Commented out for now as quite a lot older VTs are probably passing a HTTP request without the Host: header
-  #if( "Host:" >!< data && "HTTP/1.0" >!< data )
-  #  set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#http_send_recv(): No 'Host:' header passed in data variable. This might lead to issues if SNI is enabled on the remote host." );
+  #if( "Host: " >!< data && " HTTP/1.0" >!< data )
+  #  set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#http_send_recv(): No 'Host:' header passed in 'data' variable. This might lead to issues if SNI is enabled on the remote host." );
 
   if( data !~ "^(DELETE|PROPFIND|PUT|GET|HEAD|POST|OPTIONS|REPORT|MKCOL|MOVE|PROPPATCH|COPY|PATCH|CONNECT|TRACE|LOCK|UNLOCK|TRACK|M-POST|CHECKOUT|CHECKIN|UNCHECKOUT|VERSION-CONTROL|BASELINE-CONTROL) (/|\.+/|https?:|\*).* HTTP" )
     set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#http_send_recv(): URL/URI of the HTTP request passed in 'data' variable doesn't start with one of the following: '/, ./, http, *'." );
+
+  # Some (mostly older) VTs are not passing the User-Agent header but we should always have one.
+  if( " HTTP/1.1" >< data && ! egrep( pattern:"^User-Agent:.+", string:data, icase:TRUE ) ) {
+    data = ereg_replace( string:data, pattern:'\r\n\r\n', replace:'\r\nUser-Agent: ' + get_http_user_agent() + '\r\n\r\n' );
+    set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#http_send_recv(): Using a HTTP/1.1 request without a 'User-Agent:' header passed in 'data' variable. Adding it automatically to the request." );
+  }
+
+  if( _http_ua_include_oid && user_agent = egrep( pattern:"^User-Agent:.+", string:data, icase:TRUE ) ) {
+    user_agent = chomp( user_agent );
+    oid_str = "(OID:" + get_script_oid() + ")";
+    if( oid_str >!< user_agent )
+      data = str_replace( string:data, find:user_agent, replace:user_agent + " " + oid_str );
+  }
+
+  if( _http_debug ) display( "DEBUG: http_send_recv( port: ", port, ", data: ", data, " )\n" );
 
   s = http_open_socket( port );
   if( ! s )
@@ -786,12 +824,12 @@ function cgi_dirs( port, host ) {
 
   local_var port, host;
   local_var kb, optimize, usercgis;
-  # nb: http_cgi_disabled and optimize_test_enabled are global vars
+  # nb: optimize_test_enabled is a global var
 
   if( ! port )
     set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#port#-#cgi_dirs" );
 
-  if( http_cgi_disabled ) {
+  if( http_is_cgi_scan_disabled() ) {
     if( optimize_test_enabled && "yes" >< optimize_test_enabled ) {
       set_kb_item( name:"nvt_cgi_scanning_disabled/" + get_script_oid(), value:get_script_oid() + "#-#cgi_dirs()" );
     }
@@ -1411,10 +1449,12 @@ function get_http_is_marked_broken( port, host ) {
     marked_broken = get_kb_item( "www/" + host + "/" + port + "/is_broken" );
   }
 
-  if( marked_broken )
+  if( marked_broken ) {
     _http_is_broken_array[host+port] = TRUE;
-  else
+  } else {
     _http_is_broken_array[host+port] = FALSE;
+    marked_broken = FALSE;
+  }
 
   return marked_broken;
 }
@@ -1445,6 +1485,7 @@ function set_http_is_marked_broken( port, host ) {
   }
 
   set_kb_item( name:"www/" + host + "/" + port + "/is_broken", value:TRUE );
+  _http_is_broken_array[host+port] = TRUE;
   return TRUE;
 }
 
@@ -1867,20 +1908,24 @@ function report_vuln_url( port, url, url_only ) {
 # @param add_headers        Additional headers which should be added to the HTTP POST request. Needs to be an
 #                           array in form of e.g. make_array( "Content-Type", "application/x-www-form-urlencoded" )
 # @param accept_header      The Accept: header to use (e.g. application/json), defaults to "*/*" if not passed.
-# @param user_agent         The User-Agent to use within the User-Agent: header, defaults to the return of the
-#                           get_http_user_agent() function if not passed.
+# @param user_agent         The User-Agent to use within the User-Agent: header, defaults to the result of the
+#                           get_http_user_agent() function if not passed. If this parameter is given the function
+#                           will add a separate X-Scanner: header field by default. This behavior can be disabled
+#                           via the dont_add_xscanner parameter set to TRUE.
 # @param host_header_use_ip If set to TRUE the request will contain the IP instead of the target
 #                           hostname in the Host: header. This can be used for special targets not
 #                           accepting the hostname in the request.
+# @param dont_add_xscanner  Can be used in conjunction with the user_agent parameter. If set to TRUE the function
+#                           is not adding a separate X-Scanner: header field to the request.
 #
 # @return A string containing the raw HTTP POST request or NULL if no port parameter was passed or
 #         the data passed in the add_headers parameter isn't an array.
 #
 # @example req = http_post_req( port:port, url:"/", data:data, accept_header:"application/json", add_headers:make_array( "Content-Type", "application/x-www-form-urlencoded" ) );
 #
-function http_post_req( port, url, data, add_headers, accept_header, user_agent, host_header_use_ip ) {
+function http_post_req( port, url, data, add_headers, accept_header, user_agent, host_header_use_ip, dont_add_xscanner ) {
 
-  local_var port, url, data, add_headers, accept_header, user_agent, host_header_use_ip;
+  local_var port, url, data, add_headers, accept_header, user_agent, host_header_use_ip, dont_add_xscanner;
   local_var x_header, len, x_scanner_string, host, req, header;
 
   if( ! isnull( add_headers ) ) {
@@ -1908,7 +1953,7 @@ function http_post_req( port, url, data, add_headers, accept_header, user_agent,
 
   if ( ! user_agent ) {
     user_agent = get_http_user_agent();
-  } else {
+  } else if( ! dont_add_xscanner ) {
     x_header = TRUE;
     if( OPENVAS_VERSION )
       x_scanner_string = "X-Scanner: " + get_vt_string() + " " + OPENVAS_VERSION;
@@ -1958,19 +2003,23 @@ function http_post_req( port, url, data, add_headers, accept_header, user_agent,
 # @param accept_header      The Accept: header to use (e.g. text/html), defaults to the following if not passed:
 #                           image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, image/png, */*
 # @param user_agent         The User-Agent to use within the User-Agent: header, defaults to the result of the
-#                           get_http_user_agent() function if not passed.
+#                           get_http_user_agent() function if not passed. If this parameter is given the function
+#                           will add a separate X-Scanner: header field by default. This behavior can be disabled
+#                           via the dont_add_xscanner parameter set to TRUE.
 # @param host_header_use_ip If set to TRUE the request will contain the IP instead of the target
 #                           hostname in the Host: header. This can be used for special targets not
 #                           accepting the hostname in the request.
+# @param dont_add_xscanner  Can be used in conjunction with the user_agent parameter. If set to TRUE the function
+#                           is not adding a separate X-Scanner: header field to the request.
 #
 # @return A string containing the raw HTTP GET request or NULL if no port parameter was passed or
 #         the data passed in the add_headers parameter isn't an array.
 #
 # @example req = http_get_req( port:port, url:"/", accept_header:"text/html", add_headers:make_array( "Cookie", "PHPSESSID=" + sessid ) );
 #
-function http_get_req( port, url, add_headers, accept_header, user_agent, host_header_use_ip ) {
+function http_get_req( port, url, add_headers, accept_header, user_agent, host_header_use_ip, dont_add_xscanner ) {
 
-  local_var port, url, add_headers, accept_header, user_agent, host_header_use_ip;
+  local_var port, url, add_headers, accept_header, user_agent, host_header_use_ip, dont_add_xscanner;
   local_var x_header, x_scanner_string, host, req, header;
 
   if( ! isnull( add_headers ) ) {
@@ -1995,7 +2044,7 @@ function http_get_req( port, url, add_headers, accept_header, user_agent, host_h
 
   if ( ! user_agent ) {
     user_agent = get_http_user_agent();
-  } else {
+  } else if( ! dont_add_xscanner ) {
     x_header = TRUE;
     if( OPENVAS_VERSION )
       x_scanner_string = "X-Scanner: " + get_vt_string() + " " + OPENVAS_VERSION;
@@ -2129,4 +2178,27 @@ function set_http_has_generic_xss( port, host ) {
 
   set_kb_item( name:"www/" + host + "/" + port + "/generic_xss", value:TRUE );
   return TRUE;
+}
+
+# @brief Returns the info if "CGI Scanning" was disabled (Settings/disable_cgi_scanning of global_settings.nasl) within the
+#        scan config. To avoid querying the KB for the same info again it will be cached within an internal variable.
+#
+# @return TRUE if CGI scanning is disabled, FALSE otherwise.
+#
+function http_is_cgi_scan_disabled() {
+
+  local_var is_cgi_scan_disabled;
+  # nb: __http_is_cgi_scan_disabled is a global var
+
+  if( ! isnull( __http_is_cgi_scan_disabled ) ) {
+    is_cgi_scan_disabled = __http_is_cgi_scan_disabled;
+  } else {
+    is_cgi_scan_disabled = get_kb_item( "Settings/disable_cgi_scanning" );
+    if( is_cgi_scan_disabled )
+      __http_is_cgi_scan_disabled = TRUE;
+    else
+      __http_is_cgi_scan_disabled = FALSE;
+    is_cgi_scan_disabled = __http_is_cgi_scan_disabled;
+  }
+  return is_cgi_scan_disabled;
 }

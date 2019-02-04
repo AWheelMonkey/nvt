@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_sun_java_sys_web_serv_dos_vuln_win.nasl 11125 2018-08-26 21:14:30Z cfischer $
+# $Id: gb_sun_java_sys_web_serv_dos_vuln_win.nasl 12978 2019-01-08 14:15:07Z cfischer $
 #
 # Sun Java System Web Server Denial of Service Vulnerability (Windows)
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.800161");
-  script_version("$Revision: 11125 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-26 23:14:30 +0200 (Sun, 26 Aug 2018) $");
+  script_version("$Revision: 12978 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-08 15:15:07 +0100 (Tue, 08 Jan 2019) $");
   script_tag(name:"creation_date", value:"2010-02-02 07:26:26 +0100 (Tue, 02 Feb 2010)");
   script_tag(name:"cvss_base", value:"7.5");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
@@ -48,9 +48,7 @@ if(description)
 
   script_tag(name:"impact", value:"Successful exploitation lets the attackers to cause a denial of service
   via HTTP request that lacks a method token or format string specifiers
-  in PROPFIND request.
-
-  Impact Level: Application");
+  in PROPFIND request.");
 
   script_tag(name:"affected", value:"Sun Java System Web Server version 7.0 update 6 on Windows.
   Sun Java System Web Server version 7.0 update 7 on Windows.");
@@ -88,9 +86,7 @@ if( ! sjswsPath ) exit( 0 );
 sjswsPath = ereg_replace( pattern:'\"(.*)\"', replace:"\1", string:sjswsPath );
 sjswsPath = sjswsPath - "\bin\uninstall.exe" + "\setup\WebServer.inf";
 
-share = ereg_replace( pattern:"([A-Z]):.*", replace:"\1$", string:sjswsPath );
-file = ereg_replace( pattern:"[A-Z]:(.*)", replace:"\1",string:sjswsPath );
-fileData = read_file( share:share, file:file, offset:0, count:500 );
+fileData = smb_read_file(fullpath:sjswsPath, offset:0, count:500 );
 if( ! fileData ) exit( 0 );
 
 sjswsVer = eregmatch( pattern:"PRODUCT_VERSION=([0-9.]+)", string:fileData );

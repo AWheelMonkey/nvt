@@ -1,8 +1,8 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_prestashop_mult_vuln.nasl 12116 2018-10-26 10:01:35Z mmartin $
+# $Id: gb_prestashop_mult_vuln.nasl 13236 2019-01-23 10:23:07Z asteins $
 #
-# PrestaShop Multiple Vulnerabilities
+# PrestaShop <= 1.7.2.4 Multiple Vulnerabilities
 #
 # Authors:
 # Christian Kuersteiner <christian.kuersteiner@greenbone.net>
@@ -30,8 +30,8 @@ CPE = 'cpe:/a:prestashop:prestashop';
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.140722");
-  script_version("$Revision: 12116 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-26 12:01:35 +0200 (Fri, 26 Oct 2018) $");
+  script_version("$Revision: 13236 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-23 11:23:07 +0100 (Wed, 23 Jan 2019) $");
   script_tag(name:"creation_date", value:"2018-01-23 17:03:37 +0700 (Tue, 23 Jan 2018)");
   script_tag(name:"cvss_base", value:"5.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:N/A:N");
@@ -40,9 +40,9 @@ if(description)
 
   script_tag(name:"qod_type", value:"remote_banner");
 
-  script_tag(name:"solution_type", value:"NoneAvailable");
+  script_tag(name:"solution_type", value:"WillNotFix");
 
-  script_name("PrestaShop Multiple Vulnerabilities");
+  script_name("PrestaShop <= 1.7.2.4 Multiple Vulnerabilities");
 
   script_category(ACT_GATHER_INFO);
 
@@ -63,8 +63,9 @@ if(description)
 
   script_tag(name:"affected", value:"PrestaShop version 1.7.2.4 and prior.");
 
-  script_tag(name:"solution", value:"No known solution is available as of 12th September, 2018. Information
-  regarding this issue will be updated once solution details are available.");
+  script_tag(name:"solution", value:"No known solution was made available for at least one year since
+  the disclosure of this vulnerability. Likely none will be provided anymore. General solution options
+  are to upgrade to a newer release, disable respective features, remove the product or replace the product by another one.");
 
   script_xref(name:"URL", value:"http://forge.prestashop.com/browse/BOOM-4612");
   script_xref(name:"URL", value:"http://forge.prestashop.com/browse/BOOM-4613");
@@ -87,4 +88,4 @@ if (version_is_less_equal(version: version, test_version: "1.7.2.4")) {
   exit(0);
 }
 
-exit(0);
+exit(99);

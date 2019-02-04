@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_ms_kb4461504.nasl 12352 2018-11-14 15:03:21Z santu $
+# $Id: gb_ms_kb4461504.nasl 12889 2018-12-28 07:52:20Z mmartin $
 #
 # Microsoft Word 2016 Remote Code Execution Vulnerability (KB4461504)
 #
@@ -27,12 +27,12 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.814162");
-  script_version("$Revision: 12352 $");
+  script_version("$Revision: 12889 $");
   script_cve_id("CVE-2018-8573");
   script_bugtraq_id(105836);
-  script_tag(name:"cvss_base", value:"7.5");
-  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:C/I:C/A:C");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-14 16:03:21 +0100 (Wed, 14 Nov 2018) $");
+  script_tag(name:"cvss_base", value:"9.3");
+  script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:C/I:C/A:C");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-28 08:52:20 +0100 (Fri, 28 Dec 2018) $");
   script_tag(name:"creation_date", value:"2018-11-14 12:49:09 +0530 (Wed, 14 Nov 2018)");
   script_name("Microsoft Word 2016 Remote Code Execution Vulnerability (KB4461504)");
 
@@ -56,7 +56,7 @@ if(description)
 
   script_tag(name:"solution_type", value:"VendorFix");
   script_tag(name:"qod_type", value:"executable_version");
-  script_xref(name:"URL" , value:"https://support.microsoft.com/en-us/help/4461504");
+  script_xref(name:"URL", value:"https://support.microsoft.com/en-us/help/4461504");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2018 Greenbone Networks GmbH");
   script_family("Windows : Microsoft Bulletins");

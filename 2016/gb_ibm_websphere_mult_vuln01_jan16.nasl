@@ -1,8 +1,8 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_ibm_websphere_mult_vuln01_jan16.nasl 12338 2018-11-13 14:51:17Z asteins $
+# $Id: gb_ibm_websphere_mult_vuln01_jan16.nasl 12456 2018-11-21 09:45:52Z cfischer $
 #
-# IBM Websphere Apllication Server Multiple Vulnerabilities-01 Jan16
+# IBM Websphere Application Server Multiple Vulnerabilities-01 Jan16
 #
 # Authors:
 # Kashinath T <tkashinath@secpod.com>
@@ -29,18 +29,18 @@ CPE = "cpe:/a:ibm:websphere_application_server";
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.806822");
-  script_version("$Revision: 12338 $");
+  script_version("$Revision: 12456 $");
   script_cve_id("CVE-2012-3293", "CVE-2012-2190");
   script_bugtraq_id(55149, 55185);
   script_tag(name:"cvss_base", value:"5.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:P");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-13 15:51:17 +0100 (Tue, 13 Nov 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2018-11-21 10:45:52 +0100 (Wed, 21 Nov 2018) $");
   script_tag(name:"creation_date", value:"2016-01-18 18:44:43 +0530 (Mon, 18 Jan 2016)");
   script_tag(name:"qod_type", value:"remote_banner");
-  script_name("IBM Websphere Apllication Server Multiple Vulnerabilities-01 Jan16");
+  script_name("IBM Websphere Application Server Multiple Vulnerabilities-01 Jan16");
 
   script_tag(name:"summary", value:"This host is installed with IBM Websphere
-  apllication server and is prone to multiple vulnerabilities.");
+  application server and is prone to multiple vulnerabilities.");
 
   script_tag(name:"vuldetect", value:"Checks if a vulnerable version is present on the target host.");
 
@@ -63,8 +63,8 @@ if(description)
 
   script_tag(name:"solution_type", value:"VendorFix");
 
-  script_xref(name:"URL" , value:"http://www-01.ibm.com/support/docview.wss?uid=swg21606096");
-  script_xref(name:"URL" , value:"http://www-01.ibm.com/support/docview.wss?uid=swg21611313");
+  script_xref(name:"URL", value:"http://www-01.ibm.com/support/docview.wss?uid=swg21606096");
+  script_xref(name:"URL", value:"http://www-01.ibm.com/support/docview.wss?uid=swg21611313");
 
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2016 Greenbone Networks GmbH");

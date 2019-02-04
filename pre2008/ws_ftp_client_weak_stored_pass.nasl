@@ -1,5 +1,5 @@
 # OpenVAS Vulnerability Test
-# $Id: ws_ftp_client_weak_stored_pass.nasl 9348 2018-04-06 07:01:19Z cfischer $
+# $Id: ws_ftp_client_weak_stored_pass.nasl 12663 2018-12-05 12:22:06Z jschulte $
 # Description: WS_FTP client weak stored password
 #
 # Authors:
@@ -23,19 +23,13 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-
-tag_summary = "The remote host has a version of the WS_FTP client which use a weak
-  encryption method to store site password.";
-
-tag_solution = "Upgrade to the newest version of the WS_FTP client
-";
 # Ref: Bernardo Quintero of Hispasec <bernardo@hispasec.com>
 
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.14597");
-  script_version("$Revision: 9348 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-04-06 09:01:19 +0200 (Fri, 06 Apr 2018) $");
+  script_version("$Revision: 12663 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-05 13:22:06 +0100 (Wed, 05 Dec 2018) $");
   script_tag(name:"creation_date", value:"2005-11-03 14:08:04 +0100 (Thu, 03 Nov 2005)");
   script_bugtraq_id(547);
   script_cve_id("CVE-1999-1078");
@@ -46,40 +40,29 @@ if(description)
   script_tag(name:"qod_type", value:"executable_version");
   script_copyright("This script is Copyright (C) 2004 David Maciejak");
   script_family("Windows");
-  script_dependencies("secpod_reg_enum.nasl");
-  script_mandatory_keys("SMB/WindowsVersion");
-  script_require_ports(139, 445);
-  script_tag(name : "solution" , value : tag_solution);
-  script_tag(name : "summary" , value : tag_summary);
-  script_xref(name : "URL" , value : "http://www.ipswitch.com/");
+  script_dependencies("secpod_ws_ftp_client_detect.nasl");
+  script_mandatory_keys("Ipswitch/WS_FTP_Pro/Client/Ver");
+  script_tag(name:"solution_type", value:"VendorFix");
+  script_tag(name:"solution", value:"Upgrade to the newest version of the WS_FTP client");
+  script_tag(name:"summary", value:"The remote host has a version of the WS_FTP client which use a weak
+  encryption method to store site password.");
+  script_xref(name:"URL", value:"http://www.ipswitch.com/");
   exit(0);
 }
 
-
-include("smb_nt.inc");
+include("host_details.inc");
 include("version_func.inc");
-include("secpod_smb_func.inc");
 
-if(!get_kb_item("SMB/WindowsVersion")){
-  exit(0);
-}
+CPE = make_list("cpe:/a:ipswitch:ws_ftp:x64", "cpe:/a:ipswitch:ws_ftp" );
+if(!infos = get_app_version_and_location( cpe:cpe, exit_no_version: TRUE)) exit(0);
 
-wsFtpDir = registry_get_sz(key:"SOFTWARE\Microsoft\Windows\CurrentVersion" +
-                               "\App Paths\wsftpgui.exe",item:"path");
-if(!wsFtpDir){
-  exit(0);
-}
+ftpVer = infos["version"];
+loc = infos["location"];
 
-share = ereg_replace(pattern:"([A-Z]):.*", replace:"\1$", string:wsFtpDir);
-file =  ereg_replace(pattern:"[A-Z]:(.*)", replace:"\1",
-                     string:wsFtpDir + "\wsftpgui.exe");
-ftpVer = GetVer(file:file, share:share);
-
-if(!ftpVer){
-  exit(0);
-}
-
-# Grep Version <= 2007.0.0.2
 if(version_is_less_equal(version:ftpVer, test_version:"2007.0.0.2")){
-  security_message(0);
+  report = report_fixed_ver(installed_version:ftpVer, fixed_version:"12.6", install_path:loc);
+  security_message(port:0, data:report);
+  exit(0);
 }
+
+exit(99);

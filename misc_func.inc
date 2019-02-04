@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Include File
-# $Id: misc_func.inc 12163 2018-10-30 08:27:15Z cfischer $
+# $Id: misc_func.inc 13095 2019-01-16 10:35:42Z cfischer $
 #
 # Miscellaneous support methods
 #
@@ -26,13 +26,16 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# $Revision: 12163 $
+# $Revision: 13095 $
 #
 ###############################################################################
 
 # Enables debugging output for a few functions below
 global_var _misc_func_debug;
 _misc_func_debug = 0;
+
+# Global var to avoid that we're repeatedly asking redis for something we already know.
+global_var __3rdparty_domain;
 
 # This function is deprecated.
 function get_unknown_svc() {
@@ -297,9 +300,9 @@ function get_service_banner_line( service, port, ipproto ) {
     tcp = FALSE;
 
   if( tcp )
-   gport = get_kb_item( strcat( "Services/", service ) );
+    gport = get_kb_item( strcat( "Services/", service ) );
   else
-   gport = get_kb_item( strcat( "Services/", ipproto, "/", service ) );
+    gport = get_kb_item( strcat( "Services/", ipproto, "/", service ) );
   if( ! gport ) gport = port;
 
   if( tcp )
@@ -328,8 +331,8 @@ function get_service_banner_line( service, port, ipproto ) {
 #
 function get_rpc_port( program, protocol, portmap ) {
 
-  local_var  broken, req, soc, r, port, program, protocol, portmap;
-  local_var  a, b, c, d, p_a, p_b, p_c, p_d, pt_a, pt_b, pt_c, pt_d;
+  local_var broken, req, soc, r, port, program, protocol, portmap, len;
+  local_var a, b, c, d, p_a, p_b, p_c, p_d, pt_a, pt_b, pt_c, pt_d;
 
   if( isnull( program ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#program#-#get_rpc_port" );
   if( isnull( protocol ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#protocol#-#get_rpc_port" );
@@ -373,7 +376,6 @@ function get_rpc_port( program, protocol, portmap ) {
   if( protocol == IPPROTO_TCP )
   {
     req = mkdword( strlen( req ) ) + req;
-
     req = raw_string( 0x80 | ord( req[ 0 ]) ) + substr( req, 1, strlen( req ) );
   }
 
@@ -606,7 +608,7 @@ function base64_decode( str, key_str ) {
   for( i = 0; i < 256; i++ )
     b64[i] = 0;
   for( i = 0; i < strlen( base64 ); i++ )
-   b64[ord( base64[i] )] = i;
+    b64[ord( base64[i] )] = i;
 
   for( j = 0; j < len; j += 4 ) {
     for( i = 0; i < 4; i++ ) {
@@ -849,9 +851,12 @@ function hex2str() {
     return;
   }
 
-  s="";
-  for( i = 0; i < 256; ++i ) xlat[ tolower( substr( hex( i ), 2 ) ) ] = raw_string( i );
-  for( j = 0; j < strlen( hs ) / 2; ++j ) s += xlat[ tolower( substr( hs, 2 * j, 2 * j + 1 ) ) ];
+  s = "";
+  for( i = 0; i < 256; ++i )
+    xlat[ tolower( substr( hex( i ), 2 ) ) ] = raw_string( i );
+
+  for( j = 0; j < strlen( hs ) / 2; ++j )
+    s += xlat[ tolower( substr( hs, 2 * j, 2 * j + 1 ) ) ];
 
   return s;
 }
@@ -871,7 +876,6 @@ function is_fragile_port( port ) {
   foreach fragile_port( fragile_ports ) {
     if( port == fragile_port ) return TRUE;
   }
-
   return;
 }
 
@@ -947,7 +951,6 @@ function get_unknown_port( default, nodefault, ipproto ) {
   } else {
     if( ! get_udp_port_state( _port ) ) exit( 0 );
   }
-
   return _port;
 }
 
@@ -1013,7 +1016,6 @@ function get_unknown_port_list( default, nodefault, ipproto ) {
 
     __port_list = make_list( __port_list, port );
   }
-
   return __port_list;
 }
 
@@ -1053,7 +1055,6 @@ function get_all_tcp_ports_list( ) {
 
     ports = make_list( ports, port );
   }
-
   return ports;
 }
 
@@ -1085,16 +1086,23 @@ function is_printer_mac( mac ) {
   return;
 }
 
-# Add a dependency to secpod_open_tcp_ports.nasl if you want to use this
-# This replaces the nasl built-in get_host_open_port where you can't
-# control that it doesn't return a "fragile" port.
+# @brief Returns the first found known to be open TCP port on the remote system. This function
+#        replaces the nasl built-in get_host_open_port where you can't control that it doesn't
+#        return a "fragile" port.
+#
+# @note Add a dependency to secpod_open_tcp_ports.nasl if you want to use this
+#
+# @return The first found known to be open TCP Port. If none has been found the function will exit.
+#
 function get_host_open_tcp_port( ) {
 
+  local_var ports;
+
   ports = get_all_tcp_ports_list();
-  if( isnull( ports[0] ) ) exit( 0 );
-
-  return ports[0]; # TBD: Bring some randomness into this?
-
+  if( isnull( ports[0] ) )
+    exit( 0 );
+  else
+    return ports[0]; # TBD: Bring some randomness into this?
 }
 
 function bin2string( ddata, noprint_replacement ) {
@@ -1126,7 +1134,6 @@ function bin2string( ddata, noprint_replacement ) {
    }
    tmp += string( data );
   }
-
   return tmp;
 }
 
@@ -1145,7 +1152,6 @@ function ascii2unicode( data ) {
   for( i = 0; i < len; i++ ) {
     ret += data[i] + raw_string( 0x00 );
   }
-
   return ret;
 }
 
@@ -1162,15 +1168,43 @@ function join( list, sep ) {
   foreach l ( list )
     ret += l + sep;
 
-   return ereg_replace( string:ret, pattern:sep +'$', replace:'' );
+  return ereg_replace( string:ret, pattern:sep + '$', replace:'' );
 }
 
+# @brief Sends a specific data string (if passed) and receives the answer
+#        of the remote service.
+#
+# @param port   The port of the remote service. Either the port OR the soc parameter
+#               needs to be passed, not both. If the port parameter was passed the
+#               function will close the opened socket on its own.
+# @param soc    An already opened socket to the remote service. Either the soc OR the
+#               soc parameter needs to be passed, not both.
+# @param data   An (optional) data string which should be send to the remote service.
+# @param proto  The protocol used to connect to the service if the port parameter is passed.
+#               Defaults to 'tcp' if not passed.
+# @param length The amount of bytes which should be received from the remote service.
+#               Defaults to '1024' if not passed.
+#
+# @return The received data or NULL if no connection to the remote service could be opened
+#         or not all parameters where passed correctly.
+#
 function socket_send_recv( port, soc, data, proto, length ) {
 
-  local_var port, soc, data, proto, length, nosock;
+  local_var port, soc, data, proto, length;
+  local_var nosock, recv;
 
   if( ! port && ! soc ) {
     set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#port/soc#-#socket_send_recv" );
+    return;
+  }
+
+  if( proto && proto != "udp" && proto != "tcp" ) {
+    set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#socket_send_recv: proto parameter passed but doesn't contain match 'tcp' or 'udp'" );
+    return;
+  }
+
+  if( port && soc ) {
+    set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#socket_send_recv: port and soc parameter passed, please chose only one" );
     return;
   }
 
@@ -1203,12 +1237,11 @@ function socket_send_recv( port, soc, data, proto, length ) {
     close( soc );
 
   return chomp( recv );
-
 }
 
 function text_format_table( array, sep, columnheader ) {
 
-  local_var array, sep, columnheader, len, a, report, maxlen, flen, reportheader;
+  local_var array, sep, columnheader, len, a, report, maxlen, flen, padding_len, reportheader;
 
   if( ! array || ! is_array( array ) ) {
     set_kb_item( name:"nvt_debug_misc/" + get_script_oid(), value:get_script_oid() + "#-#text_format_table: No array or empty variable passed" );
@@ -1233,7 +1266,6 @@ function text_format_table( array, sep, columnheader ) {
   foreach a( sort( keys( array ) ) ) {
     flen = strlen( a );
     padding_len = ( maxlen - flen ) + 1;
-
     report += a + crap( data:" ", length:padding_len ) + sep + array[a] + '\n';
   }
 
@@ -1247,7 +1279,13 @@ function text_format_table( array, sep, columnheader ) {
   }
 }
 
+# @brief Closes an passed socket and exit afterwards
+#
+# @param _FCT_ANON_ARGS[0] The socket to close as an unnamed argument.
+#
 function close_sock_and_exit() {
+
+  local_var soc;
 
   soc = _FCT_ANON_ARGS[0];
 
@@ -1281,7 +1319,7 @@ function eol_date_reached( eol_date ) {
 
 function build_eol_message( eol_type, name, cpe, version, location, skip_version, eol_version, eol_date, eol_url ) {
 
-  local_var eol_type, name, cpe, version, location, skip_version, eol_version, eol_date, report;
+  local_var eol_type, name, cpe, version, location, skip_version, eol_version, eol_date, eol_url, report;
 
   if( eol_type != "prod" && eol_type != "os" ) {
     set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#build_prod_eol_message: Wrong value passed to eol_type. Valid values are: prod, os" );
@@ -1338,7 +1376,6 @@ function build_eol_message( eol_type, name, cpe, version, location, skip_version
     if( eol_url )
       report += '\nEOL info:          ' + eol_url;
   }
-
   return report;
 }
 
@@ -1391,33 +1428,52 @@ function fancy_date( datestr ) {
     return;
   }
 
-  if( int( datestr ) < 10 ) return string( "0", datestr );
-
-  return datestr;
+  if( int( datestr ) < 10 )
+    return string( "0", datestr );
+  else
+    return datestr;
 }
 
+# @brief Creates an array of the commands 'ipconfig' and 'id' as the array key and the regex to match
+#        against the response of these commands as the array value. The function will chose the
+#        returned commands if the remote system is running on Windows, Linux or if the OS is unknown.
+#
+# @note Add a dependency to os_detection.nasl if you want to use this function. The VT calling this
+#       function needs to also include host_details.inc (for host_runs());
+#
+# @return An array as described in the function summary.
+#
 function exploit_commands() {
 
-  if( ! defined_func( "host_runs" ) ) include( "host_details.inc" );
+  local_var res;
   res = host_runs( "windows" );
 
   if( res == "yes" ) {
-
     return make_array( "Windows.IP..onfiguration", "ipconfig" );
-
   } else if( res == "no" ) {
-
     return make_array( "uid=[0-9]+.*gid=[0-9]+", "id" );
-
   }
 
   # unknown
   return make_array( "uid=[0-9]+.*gid=[0-9]+", "id",
                      "Windows.IP..onfiguration", "ipconfig" );
-
 }
 
+# @brief Creates an array of common files to check during "Path traversal" attacks. The array contains the
+#        the regex to match against the expected content of these files as the array key and the file to check
+#        as the array value. The function will chose the returned files if the remote system is running on
+#        Windows, Linux or if the OS is unknown.
+#
+# @param _FCT_ANON_ARGS[0] Allows (optional) to pass either "windows" or "linux" as an anonymous function parameter
+#                          to define directly which kind of files should be returned.
+#
+# @note Add a dependency to os_detection.nasl if you want to use this function.
+#
+# @return An array as described in the function summary.
+#
 function traversal_files() {
+
+  local_var res;
 
   if( _FCT_ANON_ARGS[0] ) {
 
@@ -1432,15 +1488,11 @@ function traversal_files() {
   }
 
   if( res == "yes" ) {
-
     return make_array( "\[boot loader\]", "boot.ini",
                        "; for 16-bit app supporT", "winnt/win.ini",
                        "; for 16-bit app support", "windows/win.ini" );
-
   } else if( res == "no" ) {
-
     return make_array( "root:.*:0:[01]:", "etc/passwd" ); # TBD: Also check e.g. etc/hosts for basic IDS?
-
   }
 
   # "unknown"
@@ -1458,7 +1510,6 @@ function get_all_udp_ports( ) {
   port = get_kb_item( "UDP/PORTS" );
   if( ! port ) exit( 0 );
   if( ! get_udp_port_state( port ) ) exit( 0 );
-
   return port;
 }
 
@@ -1474,7 +1525,6 @@ function get_all_udp_ports_list( ) {
     if( ! get_udp_port_state( port ) ) continue;
     ports = make_list( ports, port );
   }
-
   return ports;
 }
 

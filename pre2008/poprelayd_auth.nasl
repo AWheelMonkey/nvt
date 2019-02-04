@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: poprelayd_auth.nasl 10415 2018-07-05 10:51:54Z cfischer $
+# $Id: poprelayd_auth.nasl 13137 2019-01-18 07:33:34Z cfischer $
 #
 # poprelayd & sendmail authentication problem
 #
@@ -36,8 +36,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.11080");
-  script_version("$Revision: 10415 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-05 12:51:54 +0200 (Thu, 05 Jul 2018) $");
+  script_version("$Revision: 13137 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-18 08:33:34 +0100 (Fri, 18 Jan 2019) $");
   script_tag(name:"creation_date", value:"2005-11-03 14:08:04 +0100 (Thu, 03 Nov 2005)");
   script_bugtraq_id(2986);
   script_tag(name:"cvss_base", value:"5.0");
@@ -47,11 +47,9 @@ if(description)
   script_category(ACT_GATHER_INFO);
   script_copyright("This script is Copyright (C) 2002 Michel Arboi");
   script_family("SMTP problems");
-  script_dependencies("smtpserver_detect.nasl", "sendmail_expn.nasl",
-                      "smtp_relay.nasl", "smtp_settings.nasl",
-                      "sw_postfix_detect.nasl", "global_settings.nasl");
-  script_exclude_keys("keys/islocalhost", "SMTP/wrapped", "SMTP/postfix", "SMTP/qmail");
+  script_dependencies("smtpserver_detect.nasl", "smtp_settings.nasl", "sw_postfix_detect.nasl", "global_settings.nasl");
   script_require_ports("Services/smtp", 25, 465, 587);
+  script_exclude_keys("keys/islocalhost");
 
   script_tag(name:"solution", value:"Disable poprelayd.");
 
@@ -60,34 +58,41 @@ if(description)
   your server to send their e-mails to the world, thus wasting your network bandwidth and getting you
   blacklisted.
 
-  *** Some SMTP servers such as Postfix will display a false positive here");
+  *** Some SMTP servers might display a false positive here.");
 
   script_tag(name:"qod_type", value:"remote_banner");
   script_tag(name:"solution_type", value:"Mitigation");
 
- exit(0);
+  exit(0);
 }
 
 include("smtp_func.inc");
+include("misc_func.inc");
 
 # can't perform this test on localhost
 if(islocalhost())exit(0);
 
-port = get_kb_item("Services/smtp");
-if(!port)port = 25;
-if(!get_port_state(port)) exit(0);
-if (get_kb_item('SMTP/'+port+'/broken')) exit(0);
+port = get_smtp_port(default:25);
+
+if(get_kb_item("smtp/" + port + "/qmail"))
+  exit(0);
+
+if(get_kb_item("postfix/smtp/" + port + "/detected"))
+  exit(0);
+
+if(smtp_get_is_marked_wrapped(port:port))
+  exit(0);
 
 soc = open_sock_tcp(port);
-if (!soc) exit(0);
+if(!soc) exit(0);
 
 data = smtp_recv_banner(socket:soc);
-if(!data)exit(0);
+if(!data) exit(0);
 
-domain = get_kb_item("Settings/third_party_domain");
+domain = get_3rdparty_domain();
 
-hel = string("HELO ", domain, "\r\n");
-send(socket:soc, data:hel);
+helo = string("HELO ", domain, "\r\n");
+send(socket:soc, data:helo);
 data = recv_line(socket:soc, length:1024);
 mf1 = string("MAIL FROM: <test_1@", domain, ">\r\n");
 send(socket:soc, data:mf1);
@@ -98,10 +103,9 @@ data = recv_line(socket:soc, length:1024);
 if ("Relaying denied. Please check your mail first." >< data) { suspicious=1;}
 else if(ereg(pattern:"^250 .*", string:data))exit(0);
 
-q = raw_string(0x22);	# Double quote
+q = raw_string(0x22); # Double quote
 h = this_host();
-mf = string("mail from:", q, "POP login by user ", q, "admin", q,
-	" at (", h, ") ", h, "@example.org\r\n");
+mf = string("mail from:", q, "POP login by user ", q, "admin", q, " at (", h, ") ", h, "@example.org\r\n");
 send(socket: soc, data: mf);
 data = recv_line(socket:soc, length:1024);
 close(soc);
@@ -112,7 +116,7 @@ soc = open_sock_tcp(port);
 if (!soc) exit(0);
 
 data = smtp_recv_banner(socket:soc);
-send(socket:soc, data:hel);
+send(socket:soc, data:helo);
 data = recv_line(socket:soc, length:1024);
 send(socket:soc, data:mf1);
 data = recv_line(socket:soc, length:1024);

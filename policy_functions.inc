@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test support library
-# $Id: policy_functions.inc 12340 2018-11-13 15:26:08Z emoss $
+# $Id: policy_functions.inc 13346 2019-01-29 15:23:13Z emoss $
 #
 # Supporting methods for Policy NVTs.
 #
@@ -215,19 +215,15 @@ function win32_useraccount(select,name){
 #        maintainer The package maintainer (RPM or DEB)
 #
 # @return A string with the version or NULL if not installed on host
-#
-function get_package_version(package, maintainer){
-	local_var package, maintainer;
+function get_package_version(package){
+	local_var package;
 	if(!package){
 		set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#package_version#-#package" );
 		return;
 	}
-	if(!maintainer){
-		set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#package_version#-#maintainer" );
-		return;
-	}
-	if(maintainer == 'RPM'){
-		packages_string = get_kb_item("ssh/login/rpms");
+
+	if(get_kb_item('ssh/login/rpms')){
+		packages_string = get_kb_item('ssh/login/rpms');
 		packages_list = split(packages_string, sep:';', keep:FALSE);
 		foreach pak (packages_list){
 			package_split = split(pak, sep:'~', keep:FALSE);
@@ -237,8 +233,8 @@ function get_package_version(package, maintainer){
 				return version;
 			}
 		}
-	}else if(maintainer == 'DEB'){
-		packages_string = get_kb_item("ssh/login/packages");
+	}else if(get_kb_item('ssh/login/packages')){
+		packages_string = get_kb_item('ssh/login/packages');
 		packages_list = split(packages_string, keep:FALSE);
 		foreach line (packages_list){
 			if(line =~ "^ii"){
@@ -251,6 +247,84 @@ function get_package_version(package, maintainer){
 				}
 			}
 		}
+	}
+	return;
+}
+
+# @brief Tries to find a GRUB bootloader config file on the host.
+#				 Searches for grub.conf, grub.cfg or menu.lst in directories
+#				 /boot/grub/ or /boot/grub2/.
+#
+# @return Filepath if config file found or NULL if not found
+# 				(maybe because of denied read permisisons)
+function get_grub_config_file(){
+	local_var config_file;
+
+	grub_config_files = make_list('grub.conf', 'grub.cfg', 'menu.lst');
+	grub_config_dirs = make_list('/boot/grub/', '/boot/grub2/');
+
+	foreach dir (grub_config_dirs){
+		foreach file (grub_config_files){
+			config_file = find_file(file_name:file, file_path:dir);
+			if(config_file) return config_file[0];
+		}
+	}
+	return;
+}
+
+# @brief sends a ssh_cmd and filters errors in return values.
+#
+# @param socket the socket for the ssh command
+#				 cmd the bash command
+#
+# @return return of the command or NULL if file not found or
+# 				other error occurred
+function ssh_cmd_without_errors(socket, cmd){
+	local_var socket, cmd;
+
+	ret = ssh_cmd(socket:socket, cmd:cmd, return_errors:FALSE);
+
+	if('No such file or directory' >< ret) return;
+	if('command not found' >< ret) return;
+
+	return(ret);
+}
+
+# @brief checks the file permissions, gid and uid with stat command
+#				 on a linux host
+#
+# @param file the file to check
+#				 sock socket for the ssh command
+#
+# @return an array with keys permissions, gid and uid
+
+function linux_file_permissions(file, socket){
+	local_var socket, file;
+
+	if(!sock){
+		set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#linux_file_permissions#-#socket" );
+		return;
+	}
+
+	if(!file){
+		set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#linux_file_permissions#-#file" );
+		return;
+	}
+
+	stat_cmd = 'stat ' + file;
+	stat = ssh_cmd_without_errors(socket:socket,cmd:stat_cmd);
+	if(stat && ('permission denied' >!< tolower(stat))){
+		return_array = make_list();
+		access = eregmatch(string:stat, pattern:'(Access:.+Uid.+Gid.+\\))');
+		gid = eregmatch(string:access[0], pattern:'Gid: \\((.+)\\)');
+		uid = eregmatch(string:access[0], pattern:'Uid: \\(([^\\)]*)\\)');
+		permissions = eregmatch(string:access[0], pattern:'Access: \\(([0-9]+)');
+
+		return_array['permissions'] = permissions[1];
+		return_array['gid'] = str_replace(string:gid[1], find:' ', replace:'');
+		return_array['uid'] = str_replace(string:uid[1], find:' ', replace:'');
+
+		return (return_array);
 	}
 	return;
 }

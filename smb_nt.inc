@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Include File
-# $Id: smb_nt.inc 12058 2018-10-24 12:42:55Z cfischer $
+# $Id: smb_nt.inc 12785 2018-12-13 10:41:09Z cfischer $
 #
 # Methods for handling SMB
 #
@@ -23,7 +23,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# $Revision: 12058 $
+# $Revision: 12785 $
 #
 ###############################################################################
 
@@ -261,7 +261,8 @@ function get_version_from_build( string, win_name ) {
     if( "15063" >< string ) return "1703";
     if( "16299" >< string ) return "1709";
     if( "17134" >< string ) return "1803";
-    #if( "1xxxx" >< string ) return "1809"; # Available late 2018
+    if( "17763" >< string ) return "1809";
+    # if( "1xxxx" >< string ) return "1903"; # Availability currently unknown
   }
   return;
 }
@@ -4781,7 +4782,6 @@ function registry_enum_value( soc, uid, tid, pipe, reply ) {
   if( isnull( uid ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#uid#-#registry_enum_value" );
   if( isnull( tid ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#tid#-#registry_enum_value" );
   if( isnull( pipe ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#pipe#-#registry_enum_value" );
-  if( isnull( item ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#item#-#registry_enum_value" );
   if( isnull( reply ) ) set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#reply#-#registry_enum_value" );
 
   if( strlen( uid ) == 8 ) {
@@ -6806,6 +6806,7 @@ function registry_get_sz( key, item, type ) {
 
     # Place value into the KB
     if( ! isnull( r3_value ) ) {
+      r3_value = chomp( r3_value ); # Sometimes we're getting a trailing newline back so make sure that this is removed.
       set_kb_item( name:kb_proxy_key, value:r3_value );
     } else {
       r3_value = FALSE;

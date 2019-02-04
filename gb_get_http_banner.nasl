@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_get_http_banner.nasl 12328 2018-11-13 07:27:47Z cfischer $
+# $Id: gb_get_http_banner.nasl 13360 2019-01-30 10:46:01Z ckuersteiner $
 #
 # HTTP Banner
 #
@@ -28,8 +28,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.140170");
-  script_version("$Revision: 12328 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-13 08:27:47 +0100 (Tue, 13 Nov 2018) $");
+  script_version("$Revision: 13360 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-30 11:46:01 +0100 (Wed, 30 Jan 2019) $");
   script_tag(name:"creation_date", value:"2017-02-21 11:53:19 +0100 (Tue, 21 Feb 2017)");
   script_tag(name:"cvss_base", value:"0.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
@@ -250,7 +250,7 @@ set_mandatory_key( key:"NETGEAR", regex:'Basic realm="NETGEAR');
 set_mandatory_key( key:"JVC_API", regex:"Server: JVC.*API Server", banner:banner );
 set_mandatory_key( key:"ETag", regex:"ETag:", banner:banner );
 set_mandatory_key( key:"BarracudaHTTP", regex:"Server: BarracudaHTTP", banner:banner );
-set_mandatory_key( key:"AntServer", regex:"AntServer", banner:banner );
+set_mandatory_key( key:"AntServer", regex:"Server: AntServer", banner:banner );
 set_mandatory_key( key:"CompaqHTTPServer", regex:"Server: CompaqHTTPServer/", banner:banner );
 set_mandatory_key( key:"FlashCom", regex:"erver: FlashCom", banner:banner );
 set_mandatory_key( key:"Simple-Server", regex:"erver: Simple-Server", banner:banner );
@@ -367,6 +367,7 @@ set_mandatory_key( key:"voipnow", regex: "Server: voipnow", banner:banner );
 set_mandatory_key( key:"D-LinkDNS", regex: "Server: (lighttpd/|GoAhead-Webs)", banner:banner );
 set_mandatory_key( key:"D-LinkDIR", regex: "Server: (Linux, ((HTTP/1\.1)|(WEBACCESS/1\.0)), DIR|Mathopd/|WebServer)", banner:banner );
 set_mandatory_key( key:"D-LinkDSL", regex:"Server: (Boa/|micro_httpd|Linux,|RomPager/)", banner:banner ); # For gb_dlink_dsl_detect.nasl
+set_mandatory_key( key:"D-LinkDWR", regex:"Server: (GoAhead-Webs|server|Alpha_webserv|WebServer)", banner:banner ); # For gb_dlink_dwr_detect.nasl
 set_mandatory_key( key:"Cohu", regex: "Server: Cohu Camera", banner:banner );
 set_mandatory_key( key:"HTTPserv", regex: "Server: .*HTTPserv:", banner:banner );
 set_mandatory_key( key:"ABwww", regex: "Server: A-B WWW", banner:banner );
@@ -378,5 +379,10 @@ set_mandatory_key( key:"CirCarLife", regex: "Server: CirCarLife Scada", banner:b
 set_mandatory_key( key:"mt-daapd", regex: "Server: mt-daapd", banner:banner );
 set_mandatory_key( key:"Promotic", regex: "Server: pm", banner:banner );
 set_mandatory_key( key:"ServersCheck_Monitoring_Server", regex: "Server: ServersCheck_Monitoring_Server", banner:banner );
+set_mandatory_key( key:"IWB", regex: "Server: IWB Web-Server", banner:banner );
+set_mandatory_key( key:"Mongoose", regex: "Server: Mongoose", banner:banner );
+set_mandatory_key( key:"LogitechMediaServer", regex: "Server: Logitech Media Server", banner:banner );
+set_mandatory_key( key:"HttpServer", regex: "Server: HttpServer", banner:banner );
+set_mandatory_key( key:"coturn", regex: "Server: Coturn", banner:banner );
 
 exit( 0 );

@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Include File
-# $Id: host_details.inc 12265 2018-11-08 15:57:01Z cfischer $
+# $Id: host_details.inc 13382 2019-01-31 11:07:58Z cfischer $
 #
 # Centralized and organized host information base
 #
@@ -23,7 +23,7 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# $Revision: 12265 $
+# $Revision: 13382 $
 #
 ###############################################################################
 
@@ -126,6 +126,15 @@ OS_CPE_SRC = make_list(
     "1.3.6.1.4.1.25623.1.0.810234", # gb_dlink_dap_detect.nasl
     "1.3.6.1.4.1.25623.1.0.812377", # gb_dlink_dsl_detect.nasl
     "1.3.6.1.4.1.25623.1.0.106015", # gb_dlink_dns_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.103689", # gb_dlink_dir_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.113293", # gb_dlink_dwr_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.108488", # gb_wd_mycloud_consolidation.nasl
+    "1.3.6.1.4.1.25623.1.0.108491", # gb_intelbras_ncloud_devices_http_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.141736", # gb_ricoh_iwb_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.108494", # gb_codesys_os_detection.nasl
+    "1.3.6.1.4.1.25623.1.0.141684", # gb_simatic_hmi_consolidation.nasl
+    "1.3.6.1.4.1.25623.1.0.141766", # gb_wago_plc_consolidation.nasl
+    "1.3.6.1.4.1.25623.1.0.141772", # gb_rockwell_micrologix_consolidation.nasl
     "1.3.6.1.4.1.25623.1.0.96207",  # gb_windows_cpe_detect.nasl
     "1.3.6.1.4.1.25623.1.0.50282",  # gather-package-list.nasl
     "1.3.6.1.4.1.25623.1.0.105614", # gb_cisco_pis_version.nasl
@@ -219,6 +228,15 @@ OS_TXT_SRC = make_list(
     "1.3.6.1.4.1.25623.1.0.810234", # gb_dlink_dap_detect.nasl
     "1.3.6.1.4.1.25623.1.0.812377", # gb_dlink_dsl_detect.nasl
     "1.3.6.1.4.1.25623.1.0.106015", # gb_dlink_dns_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.103689", # gb_dlink_dir_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.113293", # gb_dlink_dwr_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.108488", # gb_wd_mycloud_consolidation.nasl
+    "1.3.6.1.4.1.25623.1.0.108491", # gb_intelbras_ncloud_devices_http_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.141736", # gb_ricoh_iwb_detect.nasl
+    "1.3.6.1.4.1.25623.1.0.108494", # gb_codesys_os_detection.nasl
+    "1.3.6.1.4.1.25623.1.0.141684", # gb_simatic_hmi_consolidation.nasl
+    "1.3.6.1.4.1.25623.1.0.141766", # gb_wago_plc_consolidation.nasl
+    "1.3.6.1.4.1.25623.1.0.141772", # gb_rockwell_micrologix_consolidation.nasl
     "1.3.6.1.4.1.25623.1.0.96207",  # gb_windows_cpe_detect.nasl
     "1.3.6.1.4.1.25623.1.0.50282",  # gather-package-list.nasl
     "1.3.6.1.4.1.25623.1.0.105614", # gb_cisco_pis_version.nasl
@@ -469,8 +487,9 @@ function host_runs() {
 
   #nb: update this to include possible cpes and txt from ssh_detect.nasl, gb_ssh_os_detection.nasl, gather-package-list.nasl and other *_os_detection.nasl
   if( "linux" >< tolower( ospattern ) )
-    ospattern = '(' + ospattern + '|apc:aos|ubuntu|debian|bsd|opensuse|fedora|suse|red ?hat|centos|mandriva|mandrake|mageia|slackware|connectiva|amazon|oracle|d-link|' +
-                'turbolinux|gentoo|cisco|apple|fortios|junos|screenos|univention|esx|xen|pan-?os|qnap|synology|greenbone|hyperip|simatic|ruggedcom|vibnode|avm(:| )fritz)';
+    ospattern = '(' + ospattern + '|apc:aos|ubuntu|debian|bsd|opensuse|fedora|suse|red ?hat|centos|mandriva|mandrake|mageia|slackware|connectiva|amazon|oracle|d-link(:| )d|' +
+                'turbolinux|gentoo|cisco|apple|fortios|junos|screenos|univention|esx|xen|pan-?os|qnap|synology|greenbone|hyperip|simatic|ruggedcom|vibnode|avm(:| )fritz|my_?cloud|' +
+                'intelbras(:| )ncloud|ricoh:iwb|nucleus(_| )rtos|vxworks|chip-rtos|simatic(_| )hmi|ibm(:| )os(/|_)400)';
 
   if( eregmatch( pattern:ospattern, string:best_os, icase:TRUE ) )
     return "yes";
@@ -832,7 +851,7 @@ function get_app_location( cpe, port, nofork, skip_port, default ) {
     return;
   }
 
-  if( ! port && ! nofork && ! skip_port )
+  if( isnull( port ) && ! nofork && ! skip_port )
     set_kb_item( name:"nvt_debug_empty/" + get_script_oid(), value:get_script_oid() + "#-#port#-#get_app_location" );
 
   return get_app_details( cpe:cpe, type:"location", port:port, nofork:nofork, default:default );
@@ -1790,36 +1809,9 @@ function register_unknown_os_banner( banner, banner_type_name, banner_type_short
   banner = chomp( banner ); # Few banners have newlines at the end so removing these here
 
   # Don't report known banner were we know that it doesn't contain info about an OS here
-  # TODO: Move into the related OS detection NVTs where possible. Only keep the most generic ones in here.
-  if( banner == '* ID ("name" "Dovecot")' ||
-      banner == "+OK Dovecot ready." ||
-      banner == "220 Welcome message" || # Default welcome messages on some FTP servers
-      banner == "220 Service ready for new user." || # Default welcome messages on some FTP servers
-      banner == "SSH-2.0-RomSShell" || # Vendor: "Works with any OS vendor and will function without an OS if needed"
-      banner == "SSH-2.0-OpenSSH" ||
-      banner == "SSH-2.0-OpenSSH_" ||
-      banner == "+OK POP3 ready" ||
-      banner == "+OK POP3" ||
-      banner == "* OK IMAPrev1" ||
-      banner == "220 FTP server ready" ||
-      banner == "220 FTP server ready." ||
-      banner == "SSH-2.0-Mocana SSH" || # Cross-platform
-      banner == "login:" ||
-      banner == "Server:" ||
-      banner == "Server: " ||
-      "500 OOPS: could not bind listening IPv4 socket" >< banner || # Some broken FTP server
-      " FTP server (MikroTik " >< banner || # Already covered by gb_mikrotik_router_routeros_consolidation.nasl
+  if( banner == "login:" ||
       egrep( pattern:"^MikroTik ", string:banner ) || # Already covered by gb_mikrotik_router_routeros_consolidation.nasl
-      egrep( pattern:"^OS String: Unix; SMB String: Samba [0-9.]+[abc]?$", string:banner ) || # e.g. OS String: Unix; SMB String: Samba 4.0.9 set by smb_nativelanman.nasl
-      egrep( pattern:"^220 [0-9a-zA-Z._\-]+ ESMTP( Postfix)?$", string:banner ) || # e.g. 220 hostname ESMTP or 220 mail.example.com ESMTP Postfix
-      egrep( pattern:"ESMTP Exim [0-9._]+ ", string:banner ) || # e.g. 220 host ESMTP Exim 4.84_2 Tue, 01 Aug 2017 13:01:18 +0200
-      egrep( pattern:"^SSH-2\.0-RomSShell_[0-9.]+$", string:banner ) || # Vendor: "Works with any OS vendor and will function without an OS if needed"
-      egrep( pattern:"^[0-9.]+$", string:banner ) || # Bind9 and MySQL. Both are often only sending e.g. 9.4.2
-      egrep( pattern:"^[0-9.]+(-[0-9.]+)?-(MariaDB|log)$", string:banner ) || # MariaDB, e.g. 5.5.5-10.1.19-MariaDB or 5.5.49-MariaDB, MySQL e.g. 5.5.54-38.6-log or 5.6.25-log
-      egrep( pattern:"^SSH-2\.0-Mocana SSH [0-9.]+$", string:banner ) || # platform independent
-      egrep( pattern:"^SSH-1\.99-OpenSSH_[0-9.p]+$", string:banner ) ||
-      egrep( pattern:"^SSH-2\.0-OpenSSH_[0-9.p]+-FIPS_hpn[0-9v]+$", string:banner ) || # SSH-2.0-OpenSSH_6.1-FIPS_hpn13v11
-      egrep( pattern:"^SSH-2\.0-OpenSSH_[0-9.p]+(\-FIPS\(capable\))?$", string:banner ) ) {
+      egrep( pattern:"^[0-9.]+$", string:banner ) ) { # Bind9 and MySQL. Both are often only sending e.g. 9.4.2
     return;
   }
 

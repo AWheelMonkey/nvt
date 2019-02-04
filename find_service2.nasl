@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: find_service2.nasl 11386 2018-09-14 11:15:22Z cfischer $
+# $Id: find_service2.nasl 13392 2019-02-01 07:00:43Z cfischer $
 #
 # Service Detection with 'HELP' Request
 #
@@ -27,8 +27,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.11153");
-  script_version("$Revision: 11386 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-14 13:15:22 +0200 (Fri, 14 Sep 2018) $");
+  script_version("$Revision: 13392 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-02-01 08:00:43 +0100 (Fri, 01 Feb 2019) $");
   script_tag(name:"creation_date", value:"2005-11-03 14:08:04 +0100 (Thu, 03 Nov 2005)");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
   script_tag(name:"cvss_base", value:"0.0");
@@ -1244,12 +1244,13 @@ if( strlen( r ) > 1 && ord( r[0] ) == 0 && ord( r[1] ) >= 90 && ord( r[1] ) <= 9
 
 if( egrep( pattern:"^\+OK.*POP2.*", string:r, icase:TRUE ) ) {
   register_service( port:port, proto:"pop2" );
-  report_and_exit( port:port, data:"A pop2 server seems to be running on this port" );
+  report_and_exit( port:port, data:"A POP2 server seems to be running on this port" );
 } else if( egrep( pattern:"^\+OK.*POP.*", string:r, icase:TRUE ) ||
            egrep( pattern:"^\+OK.*Dovecot.*ready.", string:r, icase:TRUE ) ) {
+  # nb: Don't set the received banner into the KB as we want to do additional POP3
+  # fingerprinting via the CAPA / IMPLEMENTATION banner in get_pop3_banner().
   register_service( port:port, proto:"pop3" );
-  set_kb_item( name:"pop3/banner/" + port, value:r );
-  report_and_exit( port:port, data:"A pop3 server seems to be running on this port" );
+  report_and_exit( port:port, data:"A POP3 server seems to be running on this port" );
 }
 
 # FTP - note that SMTP & SNPP also return 220 & 214 codes
@@ -1355,9 +1356,20 @@ if( "Hello, this is zebra " >< r ) {
 }
 
 # IMAP4
-if( egrep( pattern:"^\* *OK .* IMAP", string:r ) ) {
+# * OK IMAP (C) example.com (Version 7.3e2-2)
+# * OK mailproc (cimap)
+# * OK [CAPABILITY IMAP4rev1 LITERAL+ SASL-IR LOGIN-REFERRALS ID ENABLE IDLE STARTTLS AUTH=PLAIN AUTH=LOGIN] Dovecot ready
+# * OK IMAP4 ready
+# * OK example.com (cimap)
+if( egrep( pattern:"^\* *OK .* IMAP", string:r ) ||
+    egrep( pattern:"^\* *OK IMAP", string:r ) ||
+    egrep( pattern:"^\* *OK .* cimap", string:r ) ||
+    # nb: The following three are from nasl_bultin_find_service.c.
+    # The first two pattern are used without a space between * and ok there, we're checking both here.
+    egrep( pattern:"^\* ?ok iplanet messaging multiplexor", string:r, icase:TRUE ) ||
+    egrep( pattern:"^\* ?ok communigate pro imap server", string:r, icase:TRUE ) ||
+    egrep( pattern:"^\* ok courier-imap", string:r, icase:TRUE ) ) {
   register_service( port:port, proto:"imap" );
-  set_kb_item( name:"imap/banner/" + port, value:r );
   report_and_exit( port:port, data:"An IMAP server is running on this port" );
 }
 

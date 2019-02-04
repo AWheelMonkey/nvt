@@ -26,16 +26,16 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.871293");
-  script_version("$Revision: 12380 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-16 12:03:48 +0100 (Fri, 16 Nov 2018) $");
+  script_version("$Revision: 12858 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-21 09:05:36 +0100 (Fri, 21 Dec 2018) $");
   script_tag(name:"creation_date", value:"2014-11-18 06:36:32 +0100 (Tue, 18 Nov 2014)");
   script_cve_id("CVE-2014-2494", "CVE-2014-4207", "CVE-2014-4243", "CVE-2014-4258",
                 "CVE-2014-4260", "CVE-2014-4274", "CVE-2014-4287", "CVE-2014-6463",
                 "CVE-2014-6464", "CVE-2014-6469", "CVE-2014-6484", "CVE-2014-6505",
                 "CVE-2014-6507", "CVE-2014-6520", "CVE-2014-6530", "CVE-2014-6551",
                 "CVE-2014-6555", "CVE-2014-6559");
-  script_tag(name:"cvss_base", value:"8.0");
-  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:S/C:P/I:P/A:C");
+  script_tag(name:"cvss_base", value:"6.8");
+  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:S/C:N/I:N/A:C");
   script_name("RedHat Update for mysql55-mysql RHSA-2014:1859-01");
   script_tag(name:"summary", value:"The remote host is missing an update for the 'mysql55-mysql'
   package(s) announced via the referenced advisory.");
@@ -63,7 +63,7 @@ these issues. After installing this update, the MySQL server daemon
   script_tag(name:"qod_type", value:"package");
   script_tag(name:"solution_type", value:"VendorFix");
   script_xref(name:"RHSA", value:"2014:1859-01");
-  script_xref(name:"URL" , value:"https://www.redhat.com/archives/rhsa-announce/2014-November/msg00029.html");
+  script_xref(name:"URL", value:"https://www.redhat.com/archives/rhsa-announce/2014-November/msg00029.html");
   script_category(ACT_GATHER_INFO);
   script_copyright("Copyright (C) 2014 Greenbone Networks GmbH");
   script_family("Red Hat Local Security Checks");

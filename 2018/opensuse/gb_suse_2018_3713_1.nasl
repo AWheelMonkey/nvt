@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_3713_1.nasl 12329 2018-11-13 08:26:34Z santu $
+# $Id: gb_suse_2018_3713_1.nasl 13284 2019-01-25 08:13:29Z mmartin $
 #
 # SuSE Update for apache2 openSUSE-SU-2018:3713-1 (apache2)
 #
@@ -29,11 +29,11 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.852123");
-  script_version("$Revision: 12329 $");
+  script_version("$Revision: 13284 $");
   script_cve_id("CVE-2018-11763");
-  script_tag(name:"cvss_base", value:"5.0");
-  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:N/A:N");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-13 09:26:34 +0100 (Tue, 13 Nov 2018) $");
+  script_tag(name:"cvss_base", value:"4.3");
+  script_tag(name:"cvss_base_vector", value:"AV:N/AC:M/Au:N/C:N/I:N/A:P");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-25 09:13:29 +0100 (Fri, 25 Jan 2019) $");
   script_tag(name:"creation_date", value:"2018-11-10 05:59:53 +0100 (Sat, 10 Nov 2018)");
   script_name("SuSE Update for apache2 openSUSE-SU-2018:3713-1 (apache2)");
   script_category(ACT_GATHER_INFO);
@@ -43,7 +43,7 @@ if(description)
   script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap42\.3");
 
   script_xref(name:"openSUSE-SU", value:"2018:3713_1");
-  script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-11/msg00015.html");
+  script_xref(name:"URL", value:"http://lists.opensuse.org/opensuse-security-announce/2018-11/msg00015.html");
 
   script_tag(name:"summary", value:"The remote host is missing an update for the 'apache2'
   package(s) announced via the openSUSE-SU-2018:3713_1 advisory.");

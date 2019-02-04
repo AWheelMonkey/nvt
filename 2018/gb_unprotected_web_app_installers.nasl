@@ -1,6 +1,6 @@
 ##############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_unprotected_web_app_installers.nasl 12025 2018-10-23 08:16:52Z mmartin $
+# $Id: gb_unprotected_web_app_installers.nasl 12754 2018-12-11 09:39:53Z cfischer $
 #
 # Unprotected Web App Installers (HTTP)
 #
@@ -28,8 +28,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.107307");
-  script_version("$Revision: 12025 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-23 10:16:52 +0200 (Tue, 23 Oct 2018) $");
+  script_version("$Revision: 12754 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-11 10:39:53 +0100 (Tue, 11 Dec 2018) $");
   script_tag(name:"creation_date", value:"2018-05-07 12:00:20 +0200 (Mon, 07 May 2018)");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:N/A:N");
   script_tag(name:"cvss_base", value:"5.0");
@@ -59,7 +59,7 @@ if(description)
   script_tag(name:"solution_type", value:"Mitigation");
   script_tag(name:"qod_type", value:"remote_banner");
 
-  script_timeout(600);
+  script_timeout(900);
 
   exit(0);
 }
@@ -95,7 +95,14 @@ genericfiles = make_array(
 "/recovery/install/", 'Shopware installer#-#<title>Shopware .* - Installer</title>',
 "/setup/index.php", 'CubeCart / phpMyAdmin installer#-#<title>(CubeCart .* Installer|phpMyAdmin setup)</title>',
 "/setup/setup.php", 'WaWision WaWi, ERP CRM installer#-#<title>WaWision Installer</title>',
-"/tao/install/", 'TAO installer#-#<title>TAO Installation</title>'
+"/tao/install/", 'TAO installer#-#<title>TAO Installation</title>',
+"/install/", "phpBB installer#-#<title>Introduction</title>#-#<span>Install</span></a></li>"
+);
+
+# nb: Used later without the cgi_dirs() result
+rootdirfiles = make_array(
+"/login.htm", 'D-Link Router Setup page#-#<title>Welcome to D-Link Router Setup</title>',
+"/adm/wizard.asp", "Intelbras NCLOUD Setup page#-#(<script>dw\(MM_easywizard\)</script>|\.\./nbox/first_page\.png)#-#<title>Roteador NCLOUD"
 );
 
 magentofiles = make_array(
@@ -166,6 +173,8 @@ port = get_http_port( default:80 );
 
 dirlist = make_list_unique( "/", cgi_dirs( port:port ) );
 check_files( filesarray:genericfiles, dirlist:dirlist, port:port );
+
+check_files( filesarray:rootdirfiles, dirlist:make_list( "/" ), port:port );
 
 madirs = get_app_location( port:port, cpe:"cpe:/a:magentocommerce:magento", nofork:TRUE );
 if( madirs )

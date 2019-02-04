@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_lotus_domino_detect.nasl 10929 2018-08-11 11:39:44Z cfischer $
+# $Id: gb_lotus_domino_detect.nasl 13397 2019-02-01 08:06:48Z cfischer $
 #
 # Lotus/IBM Domino Detection
 #
@@ -27,18 +27,18 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.100597");
-  script_version("$Revision: 10929 $");
+  script_version("$Revision: 13397 $");
   script_tag(name:"cvss_base", value:"0.0");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
-  script_tag(name:"last_modification", value:"$Date: 2018-08-11 13:39:44 +0200 (Sat, 11 Aug 2018) $");
+  script_tag(name:"last_modification", value:"$Date: 2019-02-01 09:06:48 +0100 (Fri, 01 Feb 2019) $");
   script_tag(name:"creation_date", value:"2010-04-22 20:18:17 +0200 (Thu, 22 Apr 2010)");
   script_name("Lotus/IBM Domino Detection");
   script_category(ACT_GATHER_INFO);
   script_family("Product detection");
   script_copyright("This script is Copyright (C) 2010 Greenbone Networks GmbH");
-  script_dependencies("find_service.nasl", "smtpserver_detect.nasl", "webmirror.nasl");
-  script_require_ports("Services/smtp", 25, 465, 587, "Services/pop3", 110,
-                       "Services/imap", 143, "Services/www", 80);
+  script_dependencies("smtpserver_detect.nasl", "popserver_detect.nasl", "imap4_banner.nasl", "webmirror.nasl");
+  script_require_ports("Services/smtp", 25, 465, 587, "Services/pop3", 110, 995,
+                       "Services/imap", 143, 993, "Services/www", 80);
 
   script_tag(name:"summary", value:"Detects the installed version of
   Lotus/IBM Domino.
@@ -56,7 +56,6 @@ include("cpe.inc");
 include("smtp_func.inc");
 include("imap_func.inc");
 include("pop3_func.inc");
-
 include("host_details.inc");
 include("http_func.inc");
 include("http_keepalive.inc");
@@ -65,89 +64,78 @@ include("version_func.inc");
 domino_ver = "unknown";
 debug = 0;
 
-ports = get_kb_list( "Services/smtp" );
-if( ! ports ) ports = make_list( 25, 465, 587 );
-
+ports = smtp_get_ports();
 foreach port( ports ) {
 
-  if( get_port_state( port ) ) {
+  banner = get_smtp_banner( port:port );
 
-    banner = get_smtp_banner( port:port );
+  ehlo = get_kb_item( "smtp/" + port + "/ehlo" );
+  quit = get_kb_item( "smtp/" + port + "/quit" );
+  noop = get_kb_item( "smtp/" + port + "/noop" );
+  help = get_kb_item( "smtp/" + port + "/help" );
+  rset = get_kb_item( "smtp/" + port + "/rset" );
 
-    ehlo = get_kb_item( "smtp/" + port + "/ehlo" );
-    quit = get_kb_item( "smtp/" + port + "/quit" );
-    noop = get_kb_item( "smtp/" + port + "/noop" );
-    help = get_kb_item( "smtp/" + port + "/help" );
-    rset = get_kb_item( "smtp/" + port + "/rset" );
+  if( ( "Lotus Domino" >< banner || "IBM Domino" >< banner ) ||
+      ( "pleased to meet you" >< ehlo && "Enter one of the following commands" >< help &&
+        "Reset state" >< rset && "SMTP Service closing transmission channel" >< quit && "OK" >< noop ) ) {
 
-    if( ( "Lotus Domino" >< banner || "IBM Domino" >< banner ) ||
-        ( "pleased to meet you" >< ehlo && "Enter one of the following commands" >< help &&
-          "Reset state" >< rset && "SMTP Service closing transmission channel" >< quit && "OK" >< noop ) ) {
+    install    = port + "/tcp";
+    domino_ver = "unknown";
+    version    = eregmatch( pattern:"(Lotus|IBM) Domino Release ([0-9][^)]+)", string:banner );
 
-      install    = port + "/tcp";
-      domino_ver = "unknown";
-      version    = eregmatch( pattern:"(Lotus|IBM) Domino Release ([0-9][^)]+)", string:banner );
+    if( ! isnull( version[2] ) )
+      domino_ver = version[2];
 
-      if( ! isnull( version[2] ) ) domino_ver = version[2];
+    set_kb_item( name:"Domino/Version", value:domino_ver );
+    set_kb_item( name:"Domino/Installed", value:TRUE );
+    set_kb_item( name:"ibm/domino/smtp/detected", value:TRUE );
+    set_kb_item( name:"SMTP/" + port + "/Domino", value:domino_ver );
 
-      set_kb_item( name:"Domino/Version", value:domino_ver );
-      set_kb_item( name:"Domino/Installed", value:TRUE );
-      set_kb_item( name:"SMTP/domino", value:TRUE );
-      set_kb_item( name:"SMTP/" + port + "/Domino", value:domino_ver );
+    cpe = build_cpe( value:domino_ver, exp:"([0-9][^ ]+)", base:"cpe:/a:ibm:lotus_domino:" );
+    if( ! cpe )
+      cpe = "cpe:/a:ibm:lotus_domino";
 
-      cpe = build_cpe( value:domino_ver, exp:"([0-9][^ ]+)", base:"cpe:/a:ibm:lotus_domino:" );
-      if( isnull( cpe ) )
-        cpe = "cpe:/a:ibm:lotus_domino";
-
-      register_product( cpe:cpe, location:install, port:port, service:"smtp" );
-      log_message( data:build_detection_report( app:"IBM/Lotus Domino",
-                                                version:domino_ver,
-                                                install:install,
-                                                cpe:cpe,
-                                                concluded:version[0] ),
-                                                port:port );
-    }
+    register_product( cpe:cpe, location:install, port:port, service:"smtp" );
+    log_message( data:build_detection_report( app:"IBM/Lotus Domino",
+                                              version:domino_ver,
+                                              install:install,
+                                              cpe:cpe,
+                                              concluded:version[0] ),
+                                              port:port );
   }
 }
 
-ports = get_kb_list( "Services/imap" );
-if( ! ports ) ports = make_list( 143 );
-
+ports = imap_get_ports();
 foreach port( ports ) {
 
-  if( get_port_state( port ) ) {
+  banner = get_imap_banner( port:port );
+  if( banner && "Domino IMAP4 Server" >< banner ) {
 
-    banner = get_imap_banner( port:port );
+    install    = port + "/tcp";
+    domino_ver = "unknown";
+    version    = eregmatch( pattern:"Domino IMAP4 Server Release ([0-9][^ ]+)", string:banner );
 
-    if( banner && "Domino IMAP4 Server" >< banner ) {
+    if( ! isnull( version[1] ) )
+      domino_ver = version[1];
 
-      install    = port + "/tcp";
-      domino_ver = "unknown";
-      version    = eregmatch( pattern:"Domino IMAP4 Server Release ([0-9][^ ]+)", string:banner );
+    set_kb_item( name:"Domino/Version", value:domino_ver );
+    set_kb_item( name:"Domino/Installed", value:TRUE );
 
-      if( ! isnull( version[1] ) ) domino_ver = version[1];
+    cpe = build_cpe( value:domino_ver, exp:"([0-9][^ ]+)", base:"cpe:/a:ibm:lotus_domino:" );
+    if( isnull( cpe ) )
+      cpe = "cpe:/a:ibm:lotus_domino";
 
-      set_kb_item( name:"Domino/Version", value:domino_ver );
-      set_kb_item( name:"Domino/Installed", value:TRUE );
-
-      cpe = build_cpe( value:domino_ver, exp:"([0-9][^ ]+)", base:"cpe:/a:ibm:lotus_domino:" );
-      if( isnull( cpe ) )
-        cpe = "cpe:/a:ibm:lotus_domino";
-
-      register_product( cpe:cpe, location:install, port:port, service:"imap" );
-      log_message( data:build_detection_report( app:"IBM/Lotus Domino",
-                                                version:domino_ver,
-                                                install:install,
-                                                cpe:cpe,
-                                                concluded:version[0] ),
-                                                port:port );
-    }
+    register_product( cpe:cpe, location:install, port:port, service:"imap" );
+    log_message( data:build_detection_report( app:"IBM/Lotus Domino",
+                                              version:domino_ver,
+                                              install:install,
+                                              cpe:cpe,
+                                              concluded:version[0] ),
+                                              port:port );
   }
 }
 
-ports = get_kb_list( "Services/pop3" );
-if( ! ports ) ports = make_list( 110 );
-
+ports = pop3_get_ports();
 foreach port( ports ) {
 
   if( get_port_state( port ) ) {
@@ -180,7 +168,7 @@ foreach port( ports ) {
   }
 }
 
-if( get_kb_item( "Settings/disable_cgi_scanning" ) ) exit( 0 );
+if( http_is_cgi_scan_disabled() ) exit( 0 );
 
 versionFiles = make_array( "/download/filesets/l_LOTUS_SCRIPT.inf", "Version=([0-9.]+)",
                            "/download/filesets/n_LOTUS_SCRIPT.inf", "Version=([0-9.]+)",

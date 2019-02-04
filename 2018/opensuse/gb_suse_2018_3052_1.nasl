@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_suse_2018_3052_1.nasl 12277 2018-11-09 09:04:58Z cfischer $
+# $Id: gb_suse_2018_3052_1.nasl 12858 2018-12-21 08:05:36Z ckuersteiner $
 #
 # SuSE Update for python openSUSE-SU-2018:3052-1 (python)
 #
@@ -29,11 +29,11 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.852005");
-  script_version("$Revision: 12277 $");
+  script_version("$Revision: 12858 $");
   script_cve_id("CVE-2018-1000802");
-  script_tag(name:"cvss_base", value:"5.0");
-  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:N/A:N");
-  script_tag(name:"last_modification", value:"$Date: 2018-11-09 10:04:58 +0100 (Fri, 09 Nov 2018) $");
+  script_tag(name:"cvss_base", value:"7.5");
+  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-21 09:05:36 +0100 (Fri, 21 Dec 2018) $");
   script_tag(name:"creation_date", value:"2018-10-26 06:33:48 +0200 (Fri, 26 Oct 2018)");
   script_name("SuSE Update for python openSUSE-SU-2018:3052-1 (python)");
   script_category(ACT_GATHER_INFO);
@@ -43,7 +43,7 @@ if(description)
   script_mandatory_keys("ssh/login/suse", "ssh/login/rpms", re:"ssh/login/release=openSUSELeap15\.0");
 
   script_xref(name:"openSUSE-SU", value:"2018:3052_1");
-  script_xref(name:"URL" , value:"http://lists.opensuse.org/opensuse-security-announce/2018-10/msg00015.html");
+  script_xref(name:"URL", value:"http://lists.opensuse.org/opensuse-security-announce/2018-10/msg00015.html");
 
   script_tag(name:"summary", value:"The remote host is missing an update for the 'python'
   package(s) announced via the openSUSE-SU-2018:3052_1 advisory.");

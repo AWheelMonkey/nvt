@@ -1,6 +1,6 @@
 ##############################################################################
 # OpenVAS Vulnerability Test
-# $Id: secpod_ms08-067_900056.nasl 10421 2018-07-05 12:17:22Z cfischer $
+# $Id: secpod_ms08-067_900056.nasl 13210 2019-01-22 09:14:04Z cfischer $
 # Description: Vulnerability in Server Service Could Allow Remote Code Execution (958644)
 #
 # Authors:
@@ -31,8 +31,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.900056");
-  script_version("$Revision: 10421 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-07-05 14:17:22 +0200 (Thu, 05 Jul 2018) $");
+  script_version("$Revision: 13210 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-22 10:14:04 +0100 (Tue, 22 Jan 2019) $");
   script_tag(name:"creation_date", value:"2008-10-30 14:46:44 +0100 (Thu, 30 Oct 2008)");
   script_bugtraq_id(31874);
   script_cve_id("CVE-2008-4250");
@@ -53,6 +53,7 @@ if(description)
   script_xref(name:"URL", value:"http://www.securitytracker.com/id?1021091");
   script_xref(name:"URL", value:"http://blogs.securiteam.com/index.php/archives/1150");
   script_xref(name:"URL", value:"http://www.microsoft.com/technet/security/bulletin/ms08-067.mspx");
+  script_xref(name:"URL", value:"http://technet.microsoft.com/en-us/security/dd452420.aspx");
 
   script_tag(name:"affected", value:"Microsoft Windows 2K Service Pack 4 and prior.
 
@@ -64,9 +65,7 @@ if(description)
   handle specially crafted RPC requests.");
 
   script_tag(name:"solution", value:"Run Windows Update and update the listed hotfixes or download
-  and update mentioned hotfixes in the advisory from the below link,
-
-  http://www.microsoft.com/technet/security/bulletin/ms08-067.mspx");
+  and update mentioned hotfixes in the advisory");
 
   script_tag(name:"summary", value:"This host is missing a critical security update according to
   Microsoft Bulletin MS08-067.");
@@ -74,11 +73,9 @@ if(description)
   script_tag(name:"impact", value:"Successful exploitation could allow remote attackers to take
   complete control of an affected system.
 
-  Impact Level: System
-
   Variants of Conficker worm are based on the above described vulnerability.
   More details regarding the worm and means to resolve this can be found at,
-  http://technet.microsoft.com/en-us/security/dd452420.aspx");
+  the linked references.");
 
   script_tag(name:"qod_type", value:"registry");
   script_tag(name:"solution_type", value:"VendorFix");
@@ -88,10 +85,6 @@ if(description)
 
 include("smb_nt.inc");
 include("host_details.inc");
-
-if(safe_checks()){
-  exit(0);
-}
 
 if( kb_smb_is_samba() ) exit( 0 );
 
@@ -167,7 +160,6 @@ smb_nt_andx_req = raw_string(0x00, 0x00, 0x00, 0x66, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:smb_nt_andx_req);
 
 smb_nt_andx_resp = smb_recv(socket:soc);
-
 if(smb_nt_andx_resp && strlen(smb_nt_andx_resp) < 107)
 {
   close(soc);
@@ -203,7 +195,6 @@ dcerpc_bind_srvsvc_req = raw_string(0x00, 0x00, 0x00, 0x88, 0xff, 0x53, 0x4d,
 send(socket:soc, data:dcerpc_bind_srvsvc_req);
 
 dcerpc_bind_srvsvc_resp = smb_recv(socket:soc);
-
 if(!dcerpc_bind_srvsvc_resp)
 {
   close(soc);
@@ -224,7 +215,6 @@ smb_andx_req = raw_string(0x00, 0x00, 0x00, 0x3c, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:smb_andx_req);
 
 smb_andx_resp = smb_recv(socket:soc);
-
 if(!smb_andx_resp)
 {
   close(soc);
@@ -250,7 +240,6 @@ smb_nt_andx_req1 = raw_string(0x00, 0x00, 0x00, 0x66, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:smb_nt_andx_req1);
 
 smb_nt_andx_resp1 = smb_recv(socket:soc);
-
 if(smb_nt_andx_resp1 && strlen(smb_nt_andx_resp1) < 107)
 {
   close(soc);
@@ -286,7 +275,6 @@ dcerpc_bind_wkssvc_req = raw_string(0x00, 0x00, 0x00, 0x88, 0xff, 0x53, 0x4d,
 send(socket:soc, data:dcerpc_bind_wkssvc_req);
 
 dcerpc_bind_wkssvc_resp = smb_recv(socket:soc);
-
 if(!dcerpc_bind_wkssvc_resp)
 {
   close(soc);
@@ -307,7 +295,6 @@ smb_andx_req1 = raw_string(0x00, 0x00, 0x00, 0x3c, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:smb_andx_req1);
 
 smb_andx_resp1 = smb_recv(socket:soc);
-
 if(!smb_andx_resp1)
 {
   close(soc);
@@ -354,7 +341,6 @@ netpath_cmp_req= raw_string(0x00, 0x00, 0x01, 0x10, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:netpath_cmp_req);
 
 netpath_cmp_resp = smb_recv(socket:soc);
-
 if(!netpath_cmp_resp)
 {
   close(soc);
@@ -372,7 +358,6 @@ smb_tree_dis_req = raw_string(0x00, 0x00, 0x00, 0x23, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:smb_tree_dis_req);
 
 smb_tree_dis_resp = smb_recv(socket:soc);
-
 if(!smb_tree_dis_resp)
 {
   close(soc);
@@ -390,7 +375,6 @@ smb_logoff_req = raw_string(0x00, 0x00, 0x00, 0x27, 0xff, 0x53, 0x4d, 0x42,
 send(socket:soc, data:smb_logoff_req);
 
 smb_logoff_resp = smb_recv(socket:soc);
-
 if(!smb_logoff_resp)
 {
   close(soc);
@@ -403,5 +387,4 @@ if(ord(netpath_cmp_resp[84]) == 00 && ord(netpath_cmp_resp[85]) == 00 &&
   security_message(port);
 }
 
-## Close the socket
 close(soc);

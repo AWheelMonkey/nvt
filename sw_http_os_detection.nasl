@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: sw_http_os_detection.nasl 12065 2018-10-25 06:59:36Z cfischer $
+# $Id: sw_http_os_detection.nasl 13382 2019-01-31 11:07:58Z cfischer $
 #
 # HTTP OS Identification
 #
@@ -28,8 +28,8 @@
 if(description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.111067");
-  script_version("$Revision: 12065 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-10-25 08:59:36 +0200 (Thu, 25 Oct 2018) $");
+  script_version("$Revision: 13382 $");
+  script_tag(name:"last_modification", value:"$Date: 2019-01-31 12:07:58 +0100 (Thu, 31 Jan 2019) $");
   script_tag(name:"creation_date", value:"2015-12-10 16:00:00 +0100 (Thu, 10 Dec 2015)");
   script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:N/I:N/A:N");
   script_tag(name:"cvss_base", value:"0.0");
@@ -65,8 +65,27 @@ function check_http_banner( port, banner ) {
 
     banner = chomp( banner );
 
+    # Lotus Domino is is cross-platform
+    if( banner == "Server: Lotus-Domino" ||
+        banner == "Server: Lotus Domino" ) return;
+
     # BigIP Load Balancer on the frontend, registering this could report/use a wrong OS for the backend server
     if( banner == "Server: BigIP" ) return;
+
+    # aMule Server is cross-patform
+    if( banner == "Server: aMule" ) return;
+
+    # Transmission Server is cross-platform
+    if( banner == "Server: Transmission" ) return;
+
+    # Logitech Media Server is cross-platform
+    if( banner == "Server: Logitech Media Server" ||
+        egrep( pattern:"^Server: Logitech Media Server \([0-9.]+\)$", string:banner ) ||
+        egrep( pattern:"^Server: Logitech Media Server \([0-9.]+ - [0-9.]+)$", string:banner ) )
+      return;
+
+    # NZBGet is cross-platform
+    if( "Server: nzbget" >< banner ) return;
 
     # API TCP listener is cross-platform
     if( "Server: Icinga" >< banner ) return;
@@ -82,28 +101,33 @@ function check_http_banner( port, banner ) {
     # Server: EWS-NIC5/15.18
     # Server: EWS-NIC5/96.55
     # Running on different printers from e.g. Xerox, Dell or Epson. The OS is undefined so just return...
-    # nb: Keep in single quotes
     if( egrep( pattern:"^Server: EWS-NIC5/[0-9.]+$", string:banner ) ) return;
 
     # Server: CTCFC/1.0
     # Commtouch Anti-Spam Daemon (ctasd.bin) running on Windows and Linux (e.g. IceWarp Suite)
-    # nb: Keep in single quotes
     if( egrep( pattern:"^Server: CTCFC/[0-9.]+$", string:banner ) ) return;
 
     # e.g. Server: SimpleHTTP/0.6 Python/2.7.5 -> Python is cross-platform
-    # nb: Keep in single quotes
     if( egrep( pattern:"^Server: SimpleHTTP/[0-9.]+ Python/[0-9.]+$", string:banner ) ) return;
 
     # e.g. Server: MX4J-HTTPD/1.0 -> Java implementation, cross-patform
-    # nb: Keep in single quotes
     if( egrep( pattern:"^Server: MX4J-HTTPD/[0-9.]+$", string:banner ) ) return;
 
     # e.g. Server: libwebsockets or server: libwebsockets
     if( egrep( pattern:"^Server: libwebsockets$", string:banner, icase:TRUE ) ) return;
 
+    # e.g. Server: mt-daapd/svn-1696 or Server: mt-daapd/0.2.4.1
+    # Cross-Platform
+    if( egrep( pattern:"^Server: mt-daapd/?([0-9.]+|svn-[0-9]+)?$", string:banner, icase:TRUE ) ) return;
+
+    # e.g. Server: Mongoose/6.3 or Server: Mongoose
+    # Cross-Platform
+    if( egrep( pattern:"^Server: Mongoose/?[0-9.]*$", string:banner, icase:TRUE ) ) return;
+
     if( banner == "Server:" ||
         banner == "Server: " ||
         banner == "Server: Undefined" || # Unknown
+        banner == "Server: WebServer" || # e.g. D-Link DIR- devices
         banner == "Server: squid" ||
         banner == "Server: nginx" ||
         banner == "Server: Apache" ||
@@ -305,6 +329,13 @@ function check_http_banner( port, banner ) {
     # e.g. Server: GoTTY/0.0.12
     # Server: Boa/0.94.14rc21
     if( "Server: GoTTY" >< banner || "Server: Boa" >< banner ) {
+      register_and_report_os( os:"Linux/Unix", cpe:"cpe:/o:linux:kernel", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+      return;
+    }
+
+    # "Mathopd is a very small, yet very fast HTTP server for UN*X systems."
+    # e.g. Server: Mathopd/1.5p6
+    if( "Server: Mathopd" >< banner ) {
       register_and_report_os( os:"Linux/Unix", cpe:"cpe:/o:linux:kernel", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
       return;
     }
@@ -655,10 +686,16 @@ function check_http_banner( port, banner ) {
       #
       # nb: Keep the PHP/ banner in sync with the one of check_php_banner()
       if( "(Ubuntu)" >< banner || ( "PHP/" >< banner && "ubuntu" >< banner ) ) {
-        if( "Apache/2.4.34 (Ubuntu)" >< banner || "PHP/7.2.10-0ubuntu1" >< banner ) {
+        if( "Apache/2.4.34 (Ubuntu)" >< banner || "PHP/7.2.10-0ubuntu1" >< banner || "nginx/1.15.5 (Ubuntu)" >< banner ) {
           register_and_report_os( os:"Ubuntu", version:"18.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
-        } else if( "Apache/2.4.29 (Ubuntu)" >< banner || "PHP/7.2.3-1ubuntu1" >< banner ) {
+        } else if( "Apache/2.4.29 (Ubuntu)" >< banner || "PHP/7.2.3-1ubuntu1" >< banner || "nginx/1.14.0 (Ubuntu)" >< banner ) {
           register_and_report_os( os:"Ubuntu", version:"18.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+        } else if( "nginx/1.12.1 (Ubuntu)" >< banner ) {
+          register_and_report_os( os:"Ubuntu", version:"17.10", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+        } else if( "nginx/1.10.3 (Ubuntu)" >< banner ) {
+          register_and_report_os( os:"Ubuntu", version:"16.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
+        } else if( "nginx/1.4.6 (Ubuntu)" >< banner ) {
+          register_and_report_os( os:"Ubuntu", version:"14.04", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
         } else {
           register_and_report_os( os:"Ubuntu", cpe:"cpe:/o:canonical:ubuntu_linux", banner_type:banner_type, port:port, banner:banner, desc:SCRIPT_DESC, runs_key:"unixoide" );
         }
@@ -880,7 +917,7 @@ function check_php_banner( port, host ) {
     phpBanner = get_http_banner( port:port, file:"/index.php" );
   }
 
-  phpBanner = egrep( pattern:"^X-Powered-By: PHP/.*$", string:phpBanner, icase:TRUE );
+  phpBanner = egrep( pattern:"^X-Powered-By: PHP/.+$", string:phpBanner, icase:TRUE );
   if( ! phpBanner ) {
     # nb: Currently set by sw_apcu_info.nasl and gb_phpinfo_output_detect.nasl but could be extended by other PHP scripts providing such info
     phpscriptsUrls = get_kb_list( "php/banner/from_scripts/" + host + "/" + port + "/urls" );
@@ -895,8 +932,9 @@ function check_php_banner( port, host ) {
       }
     }
   } else {
-    phpBanner = chomp( phpBanner );
     banner_type = "PHP Server banner";
+    phpBanner = chomp( phpBanner );
+    if( egrep( pattern:"^X-Powered-By: PHP/[0-9.]+$", string:phpBanner ) ) return;
   }
 
   if( phpBanner ) {

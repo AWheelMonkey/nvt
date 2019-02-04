@@ -1,6 +1,6 @@
 ###############################################################################
 # OpenVAS Vulnerability Test
-# $Id: gb_nuuo_nvr_backdoor_active.nasl 11441 2018-09-18 03:54:50Z ckuersteiner $
+# $Id: gb_nuuo_nvr_backdoor_active.nasl 12767 2018-12-12 08:39:09Z asteins $
 #
 # NUUO NVR < 3.9.1 Backdoor Activated
 #
@@ -30,11 +30,11 @@ CPE = "cpe:/a:nuuo:nuuo";
 if (description)
 {
   script_oid("1.3.6.1.4.1.25623.1.0.141487");
-  script_version("$Revision: 11441 $");
-  script_tag(name:"last_modification", value:"$Date: 2018-09-18 05:54:50 +0200 (Tue, 18 Sep 2018) $");
+  script_version("$Revision: 12767 $");
+  script_tag(name:"last_modification", value:"$Date: 2018-12-12 09:39:09 +0100 (Wed, 12 Dec 2018) $");
   script_tag(name:"creation_date", value:"2018-09-18 10:28:22 +0700 (Tue, 18 Sep 2018)");
-  script_tag(name:"cvss_base", value:"10.0");
-  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:C/I:C/A:C");
+  script_tag(name:"cvss_base", value:"7.5");
+  script_tag(name:"cvss_base_vector", value:"AV:N/AC:L/Au:N/C:P/I:P/A:P");
 
   script_cve_id("CVE-2018-1150");
 
@@ -60,6 +60,7 @@ attacker can list all of the non-admin users and change their passwords");
   script_tag(name:"solution", value:"Update to version 3.9.1 (03.09.0001.0000) or later. Remove the file
 '/tmp/moses' from the system. Recheck if malicious users have been added and change all passwords.");
 
+  script_xref(name:"URL", value:"https://www.nuuo.com/NewsDetail.php?id=0425");
   script_xref(name:"URL", value:"https://www.tenable.com/security/research/tra-2018-25");
   script_xref(name:"URL", value:"https://www.tenable.com/blog/tenable-research-advisory-peekaboo-critical-vulnerability-in-nuuo-network-video-recorder");
 
